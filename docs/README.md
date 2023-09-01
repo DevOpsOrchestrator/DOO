@@ -1,4 +1,4 @@
-# Tutorial de Instalação do XXX
+# Tutorial de Instalação do DOO
 
 ## Requisitos
 
@@ -8,7 +8,7 @@
 4) Gitlab 16 ou maior ([Instalação](https://about.gitlab.com/install/)).
 
 ## Instalação
-O XXX foi desenvolvido em Python, utilizando o framework Django. Para instalar o Django e as dependências necessárias, basta executar o seguinte comando:
+O DOO foi desenvolvido em Python, utilizando o framework Django. Para instalar o Django e as dependências necessárias, basta executar o seguinte comando:
 
 ```bash
 
@@ -35,7 +35,7 @@ Adicione as variaveis de ambiente com as credenciais do banco de dados postgres,
 
 ```bash
 
-echo 'export DB_NAME=xxx DB_USER=postgres DB_PASSWORD=postgres DB_HOST=localhost DB_PORT=5432' >> ~/.bashrc && source ~/.bashrc
+echo 'export DB_NAME=doo DB_USER=doo DB_PASSWORD=doo123 DB_HOST=localhost DB_PORT=5432' >> ~/.bashrc && source ~/.bashrc
 ```
 
 Crie o banco e o usuario no Postgresql. Execute os seguintes comandos:
@@ -49,15 +49,15 @@ sudo -u postgres psql
 ```
 Criando o banco:
 ```bash
-CREATE DATABASE xxx;
+CREATE DATABASE doo;
 ```
 Criando o usuario:
 ```bash
-CREATE USER xxx WITH PASSWORD '123456789';
+CREATE USER doo WITH PASSWORD 'doo123';
 ```
 Mudando o dono do banco:
 ```bash
-ALTER DATABASE xxx OWNER TO xxx;
+ALTER DATABASE doo OWNER TO doo;
 ```
 
 Para criar o banco e suas tabelas execute o seguinte comando:
@@ -89,6 +89,6 @@ python manage.py runserver
 
 ```
 
-Pronto, basta acessa o xxx na url [http://localhost:8000](http://localhost:8000) e se logar utilizando o usuario e senha criados nos passos anteriores.
+Pronto, basta acessa o DOO na url [http://localhost:8000](http://localhost:8000) e se logar utilizando o usuario e senha criados nos passos anteriores.
 
 
