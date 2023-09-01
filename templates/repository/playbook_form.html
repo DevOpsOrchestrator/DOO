@@ -1,0 +1,954 @@
+{% extends "base/base.html" %}
+{% load crispy_forms_tags %}
+{% load bootstrap_icons %}
+{% load filters %}
+
+{% block content %}
+
+<div class="accordion" id="accordionPlaybook">
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="inventoryAccordionHeader">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+            Inventory
+          </button>
+          
+        </h2>
+        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="inventoryAccordionHeader" data-bs-parent="#accordionPlaybook">
+          <div class="accordion-body">
+              <table class="table caption-top table-responsive">
+                  <caption>Hosts 
+                    <button type="button" class="btn btn-primary" onclick="addHost()">
+                        <span class="bi-plus"></span>
+                        Add Host
+                    </button>
+                  </caption>
+                  <thead> 
+                    <tr>
+                        <th>Host</th>
+                        <th>Groups</th>
+                        <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                      {% for name, host in playbookRepository.inventoryRepository.inventory.hosts.items %}
+                          <tr>
+                              <td>{{name}}</td>
+                              <td>{{host.groups|not_in:"all,ungrouped"|list_to_string:" "}}</td>
+                              <td>
+                                <button type="button" class="btn btn-success btn-sm" onclick="showJoinGroup('{{name}}')">
+                                  <span class="bi-window-plus"></span>
+                                  Join Group
+                                </button>
+                                <button type="button" class="btn btn-success btn-sm" onclick="editHost('{{playbookRepository.repository.id}}','{{name}}')">
+                                  <span class="bi-journal-arrow-up"></span>
+                                  Edit Vars
+                                </button>
+                                <button type="button" class="btn btn-success btn-sm" onclick="delHost('{{playbookRepository.repository.id}}','{{name}}')">
+                                  <span class="bi-trash"></span>
+                                  Delete
+                                </button>
+                              </td>
+                          </tr>
+                      {% endfor%}
+                  </tbody>
+              </table>
+              <table class="table caption-top">
+                <caption>Groups
+                  <button type="button" class="btn btn-primary" onclick="addGroup()">
+                    <span class="bi-plus"></span>
+                    Add Group
+                  </button>
+                </caption>
+                <thead> 
+                    <tr>
+                        <th>Group</th>
+                        <th>Hosts</th>
+                        <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                      {% for name, group in playbookRepository.inventoryRepository.inventory.groups.items %}
+                            {% if name not in 'all,ungrouped' %}
+                                <tr>
+                                    <td>{{name}}</td>
+                                    <td>{{group.hosts|list_to_string:" "}}</td>
+                                    <td>
+                                      <button type="button" class="btn btn-success btn-sm" onclick="editGroup('{{playbookRepository.repository.id}}','{{name}}')">
+                                        <span class="bi-journal-arrow-up"></span>
+                                        Edit Vars
+                                      </button>
+                                      <button type="button" class="btn btn-success btn-sm" onclick="delGroup('{{playbookRepository.repository.id}}','{{name}}')">
+                                        <span class="bi-trash"></span>
+                                        Delete
+                                      </button>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                      {% endfor %}
+                  </tbody>
+              </table> 
+          </div>
+        </div>
+    </div>
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="playbookFiles">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+          Playbook Files
+        </button>
+      </h2>
+      <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="playbookFiles" data-bs-parent="#accordionPlaybook">
+        <div class="accordion-body">
+            <table class="table caption-top table-responsive">
+              <caption>Files 
+                <button type="button" class="btn btn-primary" onclick="addFile()">
+                    <span class="bi-plus"></span>
+                    Add File
+                </button>
+              </caption>
+              <thead> 
+                <tr>
+                    <th>File</th>
+                    <th>Playbooks</th>
+                    <th>Actions</th>
+                </tr>
+              </thead>
+                <tbody>
+                    {% for playbookFile in playbookRepository.playbooks %}
+                        <tr>
+                            <td>{{playbookFile|get_item:"_file_name"|basename}}</td>
+                            <td>
+                              {{playbookFile.get_plays|list_to_string_by_attr:"name, "}}
+                            </td>
+                            <td>
+                              <button type="button" class="btn btn-success btn-sm" onclick="editFile('{{playbookFile.name}}')">
+                                <span class="bi-journal-arrow-up"></span>
+                                Edit File
+                              </button>
+                              <button type="button" class="btn btn-success btn-sm" onclick="addPlaybookHost('{{playbookFile|get_item:"_file_name"|basename}}' , '{{playbookFile.get_plays|list_to_string_by_attr:"name,|"}}')">
+                                <span class="bi-window-plus"></span>
+                                add Hosts
+                              </button>
+                              <button type="button" class="btn btn-success btn-sm" onclick="addPlaybookVars('{{playbookFile|get_item:"_file_name"|basename}}' , '{{playbookFile.get_plays|list_to_string_by_attr:"name,|"}}')">
+                                <span class="bi-window-plus"></span>
+                                add Vars
+                              </button>
+                              <button type="button" class="btn btn-success btn-sm" onclick="addPlaybookTask('{{playbookFile|get_item:"_file_name"|basename}}' , '{{playbookFile.get_plays|list_to_string_by_attr:"name,|"}}')">
+                                <span class="bi-window-plus"></span>
+                                add Task
+                              </button>
+                            </td>
+                        </tr>
+                    {% endfor%}
+                </tbody>
+            </table>  
+        </div>
+      </div>
+    </div>
+</div>
+
+<!-- Modal -->
+
+<!-- addHandlerModal -->
+<form id="formAddHandlerModal">
+  {% csrf_token %}
+<div class="modal fade" id="addHandlerModal" tabindex="-1" aria-labelledby="addHandlerModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" >Add Handler</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+          <div class="mb-3">     
+            <input type="hidden" id="filenamePlaybookHandler" name="filename">
+            <input type="hidden" id="playbookHandler" name="playbook">
+            <input type="hidden" id="idRepository" name="repository" value="{{playbookRepository.repository.id }}">
+
+              <label class="form-label">Name</label>
+              <input id="handlerName" type="text" name="name" class="form-control">
+              <label class="form-label">Action</label>
+              <select id="actionTaskPlaybook" name="actionSelect" class="form-select" aria-label="Select Action" onchange="changeAction(this,'varsHandleDiv')">
+                <option value="0">Select Module</option>
+                {% for module in ansibleModules %}
+                  <option value="{{module.id}}">{{module.name}}</option>
+                {% endfor%}
+              </select>
+
+              <div class="card m-2">
+                <div class="card-header">Options</div>
+                <div class="card-body">
+                  <div id="varsHandleDiv">
+                                  
+
+                  </div>
+                </div>
+              </div>
+
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#addplaybookTaskModal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="salvarHandler('addplaybookTaskModal')"> Add Handler </button>
+      </div>
+    </div>
+  </div>
+</div>
+</form>
+
+<!-- addplaybookTaskModal -->
+<form method="post" id="formAddPlaybookTask" action="{% url 'repository:playbook_task_add' playbookRepository.repository.id %}">
+  {% csrf_token %}
+<div class="modal fade" id="addplaybookTaskModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" >Add Task</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Playbook:</label>
+            <select id="taskPlaybookId" name="playbook" class="form-select" aria-label="Select playbook" onchange="changePlaybook(this,'tableActionsPlaybook')">
+            </select>
+            <input type="hidden" id="filenamePlaybookTask" name="filename">
+            <input type="hidden" id="idRepository" name="repository" value="{{playbookRepository.repository.id }}">
+
+              <label class="form-label">Name</label>
+              <input id="taskName" type="text" name="name" class="form-control">
+              <label class="form-label">Action</label>
+              <select id="actionTaskPlaybook" name="actionSelect" class="form-select" aria-label="Select Action" onchange="changeAction(this,'varsTaskPlaybookDiv')">
+                <option value="0">Select Module</option>
+                {% for module in ansibleModules %}
+                  <option value="{{module.id}}">{{module.name}}</option>
+                {% endfor%}
+              </select>
+
+              <div class="card m-2">
+                <div class="card-header">Options</div>
+                <div class="card-body">
+                  <div id="varsTaskPlaybookDiv">
+                                  
+
+                  </div>
+                </div>
+              </div>
+                
+              <div class="m-2">
+                <label class="form-label">Notify</label> 
+                <button type="button" class="btn btn-success btn-sm" onclick="criarHandler('addplaybookTaskModal')"> <span class="bi-plus"> </span> New Handler</button>
+              </div>
+              <div class="input-group mb-2">
+                <select id="notifyTaskPlaybook" name="notifySelect" class="form-select" aria-label="Select Notify">
+                </select>
+                <button class="btn btn-outline-secondary" type="button" onclick="addNotify('notificationsTaskPlaybookDiv')"> <span class="bi-plus"> </span> </button>
+              </div>
+
+              <div class="card m-2">
+                <div class="card-header">Notifications</div>
+                <div class="card-body">
+                  <div id="notificationsTaskPlaybookDiv">
+                                  
+
+                  </div>
+                </div>
+              </div>
+
+              <div class="bg-light m-2 p-2">
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                  <button class="btn btn-primary btn-sm" type="button" onclick="salvarTask('addplaybookTaskModal')"><span class="bi-plus"></span> Add Task</button>
+                </div>
+              </div>
+
+
+            <div class="card m-2">
+              <div class="card-header">
+                Tasks
+              </div>
+              <div class="card-body">
+                <div id="actionsPlaybookDiv" class="list-group">
+                  
+                </div>
+              </div>
+            </div>
+
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary"> Create </button>
+      </div>
+    </div>
+  </div>
+</div>
+</form>
+
+<!-- addplaybookVarsModal -->
+<form method="post" action="{% url 'repository:playbook_vars_add' playbookRepository.repository.id %}">
+  {% csrf_token %}
+<div class="modal fade" id="addplaybookVarsModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" >Add Vars</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Playbook:</label>
+            <select id="varsPlaybookId" name="playbook" class="form-select" aria-label="Select playbook">
+            </select>
+
+            <label class="form-label">Add Vars:</label>
+            <div class="input-group">
+              <select id="playbookParameterSelect" class="form-select" aria-label="Parametro de inventorio">
+                <option selected>Selecione um parâmetro de inventorio</option>
+                {% for playbookParameter in playbookParameters %}
+                  <option value="{{playbookParameter.id}}">{{playbookParameter.name}}</option>
+                {% endfor%}
+              </select>
+              <input type="hidden" id="filenamePlaybookVars" name="filename">
+              <button id="typeParameterButton" class="btn btn-outline-secondary" type="button" onclick="addPlaybookParameter('playbook')">Adicionar</button>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                Inventory Parameters
+              </div>
+              <div class="card-body">
+                <div id="playbookParameterDiv" class="input-group">
+
+                </div>
+              </div>
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary"> Create </button>
+      </div>
+    </div>
+  </div>
+</div>
+</form>
+
+<!-- addplaybookHostsModal -->
+<form method="post" action="{% url 'repository:playbook_host_add' playbookRepository.repository.id %}">
+  {% csrf_token %}
+<div class="modal fade" id="addplaybookHostsModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" >Add Hosts</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Playbook:</label>
+            <select id="hostPlaybookId" name="playbook" class="form-select" aria-label="Select playbook">
+            </select>
+
+            <label class="form-label">Add Hosts:</label>
+            <div class="input-group mb-3">
+              <span class="input-group-text">Select type</span>
+              <select id="typeHost" class="form-select" onchange="changeTypeHost(this)">
+                <option value="host">Host</option>
+                <option value="group">Group</option>
+              </select>
+            </div>
+            <div class="input-group mb-3" id="playbookHostDiv">
+              <span class="input-group-text">Hosts</span>
+              <select name="hosts[]" class="form-select" multiple aria-label="Select hosts">
+                {% for name, host in playbookRepository.inventoryRepository.inventory.hosts.items %}
+                  <option value="{{host}}">{{name}}</option> 
+                {% endfor %}
+              </select>
+              <input type="hidden" id="filenamePlaybook" name="filename">
+            </div>
+            <div class="input-group mb-3" id="playbookGroupDiv">
+              <span class="input-group-text">Groups</span>
+              <select name="groups[]" class="form-select" multiple aria-label="Select groups">
+                {% for name, group in playbookRepository.inventoryRepository.inventory.groups.items %}
+                    <option value="{{group}}">{{name}}</option> 
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary"> Create </button>
+      </div>
+    </div>
+  </div>
+</div>
+</form>
+
+
+
+<!-- addPlaybookFileModal -->
+<form method="post" action="{% url 'repository:Playbookfile_add' playbookRepository.repository.id %}">
+  {% csrf_token %}
+  <div class="modal fade" id="addPlaybookFileModal" tabindex="-1" aria-labelledby="addPlaybookFileModal" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="addFileTitle">Add File</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="file" class="form-label">Filename</label>
+            <input type="text" name="file" class="form-control" id="file" aria-describedby="Filename">
+
+            <label class="form-label">Add Playbook:</label>
+
+            <div class="input-group mb-3">
+              <span class="input-group-text">Name</span>
+              <input type="text" name="playbook" class="form-control" id="playbook">
+              <button id="typeParameterButton" class="btn btn-outline-secondary" type="button" onclick="addPlaybook('{{playbookRepository.repository.id}}')">Adicionar</button>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                Playbooks
+              </div>
+              <div class="card-body">
+                <div id="playbooksDiv" class="input-group">
+                  <table id="tablePlaybooks">
+              
+                  </table>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary"> Create </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<!-- delHostModal -->
+<form id="formDel" method="delete" action="">
+  {% csrf_token %}
+<div class="modal fade" id="delModal" tabindex="-1" aria-labelledby="delModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="addHostTitle">confirm deletion?</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="del" name="del">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" > Delete </button>
+      </div>
+    </div>
+  </div>
+</div>
+</form>
+
+<!-- addHostModal -->
+<form method="post" action="{% url 'repository:host_add' playbookRepository.repository.id %}" enctype="multipart/form-data">
+    {% csrf_token %}
+<div class="modal fade" id="addHostModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="addHostTitle">Add Host</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="mb-3">
+                <label for="hostForm" class="form-label">Host</label>
+                <input type="text" name="host" class="form-control" id="host" aria-describedby="host">
+                <label class="form-label">Variables:</label>
+                <div class="input-group">
+                  <select id="inventoryParameterSelectHost" class="form-select" aria-label="Parametro de inventorio">
+                    <option selected>Selecione um parâmetro de inventorio</option>
+                    {% for InventoryParameter in inventoryParameters %}
+                      <option value="{{InventoryParameter.id}}">{{InventoryParameter.name}}</option>
+                    {% endfor%}
+                  </select>
+                  <button id="typeParameterButton" class="btn btn-outline-secondary" type="button" onclick="addInventoryParameter('Host')">Adicionar</button>
+                </div>
+                <div class="card">
+                  <div class="card-header">
+                    Inventory Parameters
+                  </div>
+                  <div class="card-body">
+                    <div id="inventoryParameterDivHost" class="input-group">
+
+                    </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary"> Create </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<!-- addGroupModal -->
+<form method="post" action="{% url 'repository:group_add' playbookRepository.repository.id %}">
+  {% csrf_token %}
+  <div class="modal fade" id="addGroupModal" tabindex="-1" aria-labelledby="addGroupModal" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="addHostTitle">Add Group</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="group" class="form-label">Group</label>
+            <input type="text" name="group" class="form-control" id="group" aria-describedby="group">
+            <label class="form-label">Variables:</label>
+            <div class="input-group">
+              <select id="inventoryParameterSelectGroup" class="form-select" aria-label="Parametro de inventorio">
+                <option selected>Selecione um parâmetro de inventorio</option>
+                {% for InventoryParameter in inventoryParameters %}
+                  <option value="{{InventoryParameter.id}}">{{InventoryParameter.name}}</option>
+                {% endfor%}
+              </select>
+              <button id="typeParameterButton" class="btn btn-outline-secondary" type="button" onclick="addInventoryParameter('Group')">Adicionar</button>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                Inventory Parameters
+              </div>
+              <div class="card-body">
+                <div id="inventoryParameterDivGroup" class="input-group">
+
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary"> Create </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<!-- joinGroupHostModal -->
+<form method="post" action="{% url 'repository:host_join_group' playbookRepository.repository.id %}">
+  {% csrf_token %}
+<div class="modal fade" id="joinGroupHostModal" tabindex="-1" aria-labelledby="joinGroupHostModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" >Join Groups</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+          <input type="hidden" id="hostJoinGroup" name="hostJoinGroup">
+          <label class="form-label">Groups:</label>
+          <select name="groups[]" class="form-select" multiple aria-label="Select groups">
+            {% for name, group in playbookRepository.inventoryRepository.inventory.groups.items %}
+              {% if name not in 'all,ungrouped' %}
+                <option value="{{group}}">{{name}}</option> 
+              {% endif %}
+            {% endfor %}
+          </select>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary"> Create </button>
+      </div>
+    </div>
+  </div>
+</div>
+</form>
+
+<script>
+  $('#playbookGroupDiv').hide();
+
+  function removerTask(playbook, filename, name){
+    var base_url = window.location.origin;
+    var id = $('#idRepository').val();
+    //var csrfmiddlewaretoken = $('input[name="csrfmiddlewaretoken"]').val();
+    //var remover = 'csrfmiddlewaretoken='+csrfmiddlewaretoken+'&playbook='+playbook+'&filename='+filename+'&repository='+id+'&name='+name;
+    var remover = {'playbook':playbook,'filename':filename, 'name':name};
+
+    //var form = $('#formAddPlaybookTask').serialize();
+
+    $.ajax({
+      url: base_url+'/repository/playbook/play/task/del/'+id,
+      type: 'GET',
+      data: remover,
+      success: function(result) {
+        $.get(base_url+'/repository/playbook/play/tasks/'+id,remover,function(data){
+          content = ''
+          
+          data.forEach(function(t){
+            content += '<a href="#" class="list-group-item list-group-item-action" aria-current="true">'+
+                        '<div class="container">'+
+                          '<div class="row">'+
+                            '<div class="col-10">'+
+                              '<div class="d-flex w-100 justify-content-between">'+
+                                '<h5 class="mb-1">-name: '+t.name+'</h5>'+
+                              '</div>'+
+                              '<p class="mb-1"><p>'+t.action+':</p>';
+                              Object.keys(t[t.action]).forEach(function(key){
+                                content += key+': '+t[t.action][key]+'<br>\n';
+                              });
+                                content += ' </p>';
+                content += '</div>'+
+                            '<div class="col-2 align-self-center">'+
+                              '<button class="btn btn-outline-secondary right" type="button" onclick="removerTask(\''+playbook+'\',\''+filename+'\',\''+t.name+'\')"> <span class="bi-trash"></span> </button>'+
+                            '</div>'+
+                        '</div> '+
+                        '</div>'+
+                      '</a>';
+          });
+
+          $("#actionsPlaybookDiv").html(content);
+        });
+      }
+    });
+  }
+
+  function addNotify(div){
+    var notify = $('#notifyTaskPlaybook').val();
+    var idNotify = notify.toLowerCase().replace(' ','_')
+    var content = $("#"+div).html();
+       content += '<a href="#" id="notify_'+idNotify+'" class="list-group-item list-group-item-action" aria-current="true">'+
+                      '<div class="container">'+
+                        '<div class="row">'+
+                          '<div class="col-10">'+
+                            '<div class="d-flex w-100 justify-content-between">'+
+                              '<h5 class="mb-1">'+notify+'</h5>'+
+                              '<input type="hidden" name="notify[]" value="'+notify+'">'+
+                            '</div>'+
+                          '</div>'+
+                          '<div class="col-2 align-self-center">'+
+                            '<button class="btn btn-outline-secondary right" type="button" onclick="removeId(\'notify_'+idNotify+'\')"> <span class="bi-trash"></span> </button>'+
+                          '</div>'+
+                       '</div> '+
+                      '</div>'+
+                     '</a>';
+
+    $("#"+div).html(content);
+  }
+
+  function salvarHandler(parent){
+    var base_url = window.location.origin;
+    var id = $('#idRepository').val();
+    var playbook = $('#playbookHandler').val();
+    var filename = $('#filenamePlaybookHandler').val();
+    var dataHandler = {'playbook':playbook,'filename':filename}
+
+    var form = $('#formAddHandlerModal').serialize();
+
+    $.post(base_url+'/repository/playbook/play/handler/add/'+id, form,function( data ) {
+      $.get(base_url+'/repository/playbook/play/handlers/'+id,dataHandler,function(data){
+
+        $("#notifyTaskPlaybook")
+            .empty()
+            .append(new Option('Select Handle', 0));
+
+        data.forEach(function(h){
+          $("#notifyTaskPlaybook").append(new Option(h.name, h.name));
+        });  
+      })
+    })
+
+    $('#addHandlerModal').modal('hide');
+    $('#'+parent).modal('show');
+  }
+
+  function criarHandler(parent){
+    var id = $('#idRepository').val();
+    var playbook = $('#taskPlaybookId').val();
+    var filename = $('#filenamePlaybookTask').val();
+
+    $('#playbookHandler').val(playbook);
+    $('#filenamePlaybookHandler').val(filename);
+
+    $('#'+parent).modal('hide');
+    $('#addHandlerModal').modal('show');
+  }
+
+  function salvarTask(){
+    var base_url = window.location.origin;
+    var id = $('#idRepository').val();
+    var playbook = $('#taskPlaybookId').val();
+    var filename = $('#filenamePlaybookTask').val();
+    var dataTask = {'playbook':playbook,'filename':filename}
+
+    var form = $('#formAddPlaybookTask').serialize();
+  
+    $.post(base_url+'/repository/playbook/play/task/add/'+id, form,function( data ) {
+      $.get(base_url+'/repository/playbook/play/tasks/'+id,dataTask,function(data){
+        content = ''
+        
+        data.forEach(function(t){
+          content += '<a href="#" class="list-group-item list-group-item-action" aria-current="true">'+
+                      '<div class="container">'+
+                        '<div class="row">'+
+                          '<div class="col-10">'+
+                            '<div class="d-flex w-100 justify-content-between">'+
+                              '<h5 class="mb-1">-name: '+t.name+'</h5>'+
+                            '</div>'+
+                            '<p class="mb-1"><p>'+t.action+':</p>';
+                            Object.keys(t[t.action]).forEach(function(key){
+                              content += key+': '+t[t.action][key]+'<br>\n';
+                            });
+                              content += ' </p>';
+               content += '</div>'+
+                          '<div class="col-2 align-self-center">'+
+                            '<button class="btn btn-outline-secondary right" type="button" onclick="removerTask(\''+playbook+'\',\''+filename+'\',\''+t.name+'\')"> <span class="bi-trash"></span> </button>'+
+                          '</div>'+
+                       '</div> '+
+                      '</div>'+
+                     '</a>';
+        });
+        $("#actionsPlaybookDiv").html(content);
+      })
+    });
+  }
+
+  function showOption(){
+    opt = $('#selectOptionHidden').val();
+    $('#option'+opt).removeAttr('hidden');
+  }
+
+  function changePlaybook(select,table){
+    var base_url = window.location.origin;
+    var playbook = select.value;
+
+    if (playbook != 0){ 
+      var id = $('#idRepository').val();
+      var playbook = select.value;
+      var filename = $('#filenamePlaybookTask').val();
+      var dataTask = {'playbook':playbook,'filename':filename}
+
+      $.get(base_url+'/repository/playbook/play/handlers/'+id,dataTask,function(data){
+        $("#notifyTaskPlaybook").append(new Option('Select Handle', 0));
+        data.forEach(function(h){
+          $("#notifyTaskPlaybook").append(new Option(h.name, h.name));
+        });        
+      })
+
+      $.get(base_url+'/repository/playbook/play/tasks/'+id,dataTask,function(data){
+        content = ''
+        
+        data.forEach(function(t){
+          content += '<a href="#" class="list-group-item list-group-item-action" aria-current="true">'+
+                      '<div class="container">'+
+                        '<div class="row">'+
+                          '<div class="col-10">'+
+                            '<div class="d-flex w-100 justify-content-between">'+
+                              '<h5 class="mb-1">-name: '+t.name+'</h5>'+
+                            '</div>'+
+                            '<p class="mb-1"><p>'+t.action+':</p>';
+                            Object.keys(t[t.action]).forEach(function(key){
+                              content += key+': '+t[t.action][key]+'<br>\n';
+                            });
+                              content += ' </p>';
+               content += '</div>'+
+                          '<div class="col-2 align-self-center">'+
+                            '<button class="btn btn-outline-secondary right" type="button" onclick="removerTask(\''+playbook+'\',\''+filename+'\',\''+t.name+'\')"> <span class="bi-trash"></span> </button>'+
+                          '</div>'+
+                       '</div> '+
+                      '</div>'+
+                     '</a>';
+        });
+        $("#actionsPlaybookDiv").html(content);
+      })
+    }
+  }
+
+  function changeAction(select,div){
+    var id = select.value
+    var base_url = window.location.origin;
+
+    if(id != 0){
+      $.get( base_url+'/iac/ansibleModuleVariable/'+id, function( data ) {
+        $("#"+div).html( data );
+      });
+    }else{
+      $("#"+div).html(' ');
+    }
+  }
+
+  function changeTypeHost(select){
+    var option = select.value
+
+    if(option == 'host'){
+      $('#playbookGroupDiv').hide();
+      $('#playbookHostDiv').show();
+    }else{
+      $('#playbookGroupDiv').show();
+      $('#playbookHostDiv').hide();
+    }
+  }
+
+  function addPlaybookHost(filename, plays){
+    
+    var playbooks = plays.split('|');
+
+    $('#filenamePlaybook').val(filename);
+
+    playbooks.forEach(function(nome, i) {
+      $("#hostPlaybookId").append(new Option(nome, nome));
+    }) 
+    
+    $('#addplaybookHostsModal').modal('show');
+  }
+
+  function addPlaybookTask(filename, plays){
+
+    var playbooks = plays.split('|');
+
+    $('#filenamePlaybookTask').val(filename);
+
+    $("#taskPlaybookId").append(new Option('select Playbook', 0));
+    playbooks.forEach(function(nome, i) {
+      $("#taskPlaybookId").append(new Option(nome, nome));
+    })
+
+    $('#addplaybookTaskModal').modal('show');
+  }
+
+  function addPlaybookVars(filename, plays){
+
+    var playbooks = plays.split('|');
+
+    $('#filenamePlaybookVars').val(filename);
+
+    playbooks.forEach(function(nome, i) {
+      $("#varsPlaybookId").append(new Option(nome, nome));
+    })
+
+    $('#addplaybookVarsModal').modal('show');
+  }
+
+  function addFile(){
+    $('#addPlaybookFileModal').modal('show');
+  }
+
+  function removeId(id){
+    $('#'+id).remove();
+  }
+    
+  function addPlaybook(idRepository){
+    content = $('#tablePlaybooks').html()
+    var play = $('#playbook').val();
+    content += '<tr id="'+play+'"> '+
+                  '<td>'+play+'</td> '+
+                  '<td> '+
+                    '<button class="btn btn-outline-secondary" type="button" onclick="removeId(\''+play+'\')"> '+
+                      '<span class="bi-trash"></span> '+
+                    '</button>'+
+                  '<td> '+
+                  '<input type="hidden" name="playbook[]" value="'+play+'">'+
+               '</tr>'
+    $('#tablePlaybooks').html(content)
+  }
+
+  function addHost(){
+    $('#host').val('');
+    $( "#inventoryParameterDivHost" ).html('');
+    $('#addHostModal').modal('show');
+  }
+
+  function addGroup(){
+    $('#group').val('');
+    $( "#inventoryParameterDivGroup" ).html('');
+    $('#addGroupModal').modal('show');
+  }
+
+  function delHost(id,host){
+    var base_url = window.location.origin;
+    $('#formDel').attr('action', base_url+'/repository/playbook/host/del/'+id+'?del='+host);
+    $('#del').val(host)
+    $('#delModal').modal('show');
+  }
+
+  function delGroup(id,group){
+    var base_url = window.location.origin;
+    $('#formDel').attr('action', base_url+'/repository/playbook/group/del/'+id+'?del='+group);
+    $('#del').val(group)
+    $('#delModal').modal('show');
+  }
+
+  function editHost(pk,host){
+    var base_url = window.location.origin;
+    $('#host').val(host);
+
+    $.get( base_url+'/repository/playbook/host/vars/'+pk,{host: host} ,function( data ) {
+      $( "#inventoryParameterDivHost" ).html( data );
+    });
+
+    $('#addHostModal').modal('show');
+  }
+
+  function editGroup(pk,group){
+    var base_url = window.location.origin;
+    $('#group').val(group);
+
+    $.get( base_url+'/repository/playbook/group/vars/'+pk,{group: group} ,function( data ) {
+      $( "#inventoryParameterDivGroup" ).html( data );
+    });
+
+    $('#addGroupModal').modal('show');
+  }
+
+  function showJoinGroup(host){
+    $('#hostJoinGroup').val(host);
+    $('#joinGroupHostModal').modal('show');
+  }
+
+  function removeInventoryParameter(id){
+    var elem = document.getElementById(id);
+    elem.parentNode.removeChild(elem);
+  }
+
+  function addPlaybookParameter(screen){
+    var base_url = window.location.origin;
+    var id = $("#"+screen+"ParameterSelect").val();
+
+    $.get( base_url+'/iac/'+screen+'Parameter/'+id, function( data ) {
+      $("#"+screen+"ParameterDiv").html( data );
+    });
+
+  }
+
+  function addInventoryParameter(screen){
+    var base_url = window.location.origin;
+    var id = document.getElementById("inventoryParameterSelect"+screen).value;
+    var url = base_url+'/iac/inventoryParameter/'+id;
+    
+    var xhrobj = new XMLHttpRequest();
+    xhrobj.open('GET',url);
+    xhrobj.send();
+
+    xhrobj.onreadystatechange = function () {
+      if (this.readyState == 4 && this.status == 200) {
+        var idParameter = id+'_div_parameter';
+        var htmlDiv = '<div id="'+idParameter+'" class="input-group"> '+ xhrobj.responseText;
+        htmlDiv += '<button class="btn btn-outline-secondary" type="button" onclick="removeInventoryParameter(\''+idParameter+'\')"><span class="bi-trash"></span></button>'
+        htmlDiv += '</div>'
+        document.getElementById("inventoryParameterDiv"+screen).innerHTML += htmlDiv;
+      }
+    }
+  }
+</script>
+
+
+{% endblock %}

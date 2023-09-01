@@ -1,0 +1,34 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+<form >
+    <div class="row">
+        <div>
+            <div class="card-header">
+                <samp><span id="numero">numero: {{ ticket.numero }}</span></samp>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <p>Descrição: {{ ticket.descrição }}</p>
+                    <p>Data: {{ ticket.data_inicio }}</p>
+                    <p>Prioridade: {{ ticket.prioridade }}</p>
+                </div>
+            </div>
+        </div>    
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <label for="Templates">Templates: </label>
+            <select name="template" id="template" class="form-control" >
+                {% for template in templates %}
+                <option value="{{template.id}}" selcted="">{{template.titulo}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <button type="button" class="btn btn-primary">Primary</button>
+        </div>
+
+    </div>
+</form>
+{% endblock %}

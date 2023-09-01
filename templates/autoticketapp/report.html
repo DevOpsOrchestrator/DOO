@@ -1,0 +1,25 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+    <p>
+        {% for team_obj in team_obj_list %}
+
+            {{ team_obj.nome }}
+
+            {% for group_obj in team_obj.equipe_set.all %}
+                {{ group_obj.nome }}
+
+                {% for service_obj in group_obj.servico_set.all %}
+                    {{ service_obj.nome }}
+                    {{ service_obj.status }}
+                    {% for teamplate_obj in service_obj.template_set.all %}
+                        {{ teamplate_obj.id }}
+                    {% endfor %}
+
+                {% endfor %}
+
+            {% endfor %}
+
+        {% endfor %}
+    </p>
+{% endblock %}

@@ -1,0 +1,46 @@
+version: '3.4'
+services:
+  autoticket:
+    ports:
+      - 8000:8000
+      - 3000:3000
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ${AUTOTICKET_NAME}
+    hostname: ${AUTOTICKET_NAME}
+    environment:
+      REPOSITORY: ${REPOSITORY}
+      DJANGO_DEBUG: ${DJANGO_DEBUG}
+      DB_NAME: ${POSTGRES_DB}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_USER: ${POSTGRES_USER}
+      DB_HOST: ${POSTGRESQL_NAME}
+      DB_WAIT_DEBUG: ${DB_WAIT_DEBUG}
+      SECRET_KEY: ${SECRET_KEY}
+      SKIP_SUPERUSER: ${SKIP_SUPERUSER}
+      SUPERUSER_API_TOKEN: ${SUPERUSER_API_TOKEN}
+      SUPERUSER_EMAIL: ${SUPERUSER_EMAIL}
+      SUPERUSER_NAME: ${SUPERUSER_NAME}
+      SUPERUSER_PASSWORD: ${SUPERUSER_PASSWORD}
+    depends_on:
+    - postgres
+
+  # postgres
+  postgres:
+    image: postgres:${POSTGRESQL_VERSION}
+    container_name: ${POSTGRESQL_NAME}
+    hostname: ${POSTGRESQL_HOST}
+    ports:
+      - ${POSTGRESQL_PORT_EXTERNAL}:5432
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      TZ: "America/Fortaleza"
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 30s
+      retries: 10

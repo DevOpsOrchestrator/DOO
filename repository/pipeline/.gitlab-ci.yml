@@ -1,0 +1,9 @@
+stages:
+  - deploy
+
+deploy-job:
+  stage: deploy
+  script:
+    - chmod 600 -R files/keys/*
+    - chmod a+x vault.py
+    - ansible-playbook -i hosts main.yaml --vault-id @vault.py

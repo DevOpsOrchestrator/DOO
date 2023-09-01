@@ -1,0 +1,74 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+
+{% if perms.autoticketapp.add_team %}
+    <a class="btn btn-sm btn-primary" href="{% url 'autoticket:team_add' %}">+ Equipe</a>
+{% endif %}
+
+{% for team in teams %}
+    <div class="card-header">
+        <div>
+            <samp><span>{{team.nome}}</span></samp>
+            {% if perms.autoticketapp.add_group %}
+                <a class="btn btn-sm btn-primary" href="{% url 'autoticket:group_add' %}">+ Grupo</a>
+            {% endif %}
+            {% if perms.autoticketapp.change_team %}
+                <a class="btn btn-sm btn-warning" href="{% url 'autoticket:team_edit' team.id %}">Editar</a>
+            {% endif %}
+            {% if perms.autoticketapp.delete_team %}
+                <a class="btn btn-sm btn-danger" href="{% url 'autoticket:team_del' team.id %}">Deletar</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            {% for group in team.groups.all %}
+                <div class="card-header">
+                    <div>
+                        <samp><span>{{group.nome}}</span></samp>
+                        {% if perms.autoticketapp.add_service %}
+                            <a class="btn btn-sm btn-primary" href="{% url 'autoticket:service_add' %}">+ Service</a>
+                        {% endif %}
+                        {% if perms.autoticketapp.change_group %}
+                            <a class="btn btn-sm btn-warning" href="{% url 'autoticket:group_edit' group.id %}">Editar</a>
+                        {% endif %}
+                        {% if perms.autoticketapp.delete_group %}
+                            <a class="btn btn-sm btn-danger" href="{% url 'autoticket:group_del' group.id %}">Deletar</a>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for service in group.services.all %}
+                            <div class="row">
+                                <div class="col-5" >
+                                    {{service.nome}}
+                                </div>
+                                <div class="col-1" >
+                                    {{service.status}}
+                                </div>
+                                <div class="col-6" >
+                                    {% if perms.autoticketapp.add_template %}
+                                        <a class="btn btn-sm btn-primary" href="{% url 'autoticket:template_add' %}">+ Template</a>
+                                    {% endif %}
+                                    {% if perms.autoticketapp.change_service %}
+                                        <a class="btn btn-sm btn-warning" href="{% url 'autoticket:service_edit' service.id %}">Editar</a>
+                                    {% endif %}
+                                    {% if perms.autoticketapp.delete_service %}
+                                        <a class="btn btn-sm btn-danger" href="{% url 'autoticket:service_del' service.id %}">Deletar</a>
+                                    {% endif %}
+                                    {% if perms.autoticketapp.view_template %}
+                                        <a class="btn btn-sm btn-success" href="{% url 'autoticket:template'%}">listar Templates</a>
+                                    {% endif %}
+                                </div>                                
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endfor %}
+        
+{% endblock %}

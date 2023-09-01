@@ -1,0 +1,7 @@
+{% if perms.repository.change_repo %}
+<a class="btn btn-sm btn-warning" href="{% url 'repository:repo_edit' record.id %}">Editar</a>
+{% endif %}
+{% if perms.repository.delete_repo %}
+<a class="btn btn-sm btn-danger" href="{% url 'repository:repo_del' record.id %}">Deletar</a>
+{% endif %} 
+<a class="btn btn-sm btn-primary" href="{% url 'repository:playbook_detail' record.id %}">IaC</a>

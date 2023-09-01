@@ -1,0 +1,61 @@
+
+{% extends 'base/base.html' %}
+{% load widget_tweaks %}
+
+{% block layout %}
+
+    {# Login form #}
+    <section class="vh-100 gradient-custom">
+      <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+          <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+            <div class="card bg-dark" style="border-radius: 1rem;">
+              <div class="card-body p-5 text-center">
+
+                <h2 class="fw-bold mb-2 text-uppercase text-white">Login</h2>
+                <p class="text-white-50 mb-5">Por favor insira seu login e senha</p>
+    
+                <div class="mb-md-5 mt-md-4 pb-5">
+                  <form action="{% url 'user:login' %}" method="post">
+                    {% csrf_token %}
+
+                    {# Set post-login URL #}
+                    {% if 'next' in request.GET %}
+                    <input type="hidden" name="next" value="{{ request.GET.next }}" />
+                    {% endif %} {% if 'next' in request.POST %}
+                    <input type="hidden" name="next" value="{{ request.POST.next }}" />
+                    {% endif %}
+
+                    <div class="form-floating">
+                      {% render_field form.username class+="form-control text-black" placeholder="name@example.com" %}
+                      <label for="id_username">Login</label>
+                    </div>
+                    <div class="form-floating">
+                      {% render_field form.password class+="form-control text-black" placeholder="Password" %}
+                      <label for="id_password">Senha</label>
+                    </div>                    
+
+                    <button type="submit" class="btn btn-primary btn-lg w-100 mt-4">
+                      Sign In
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    
+
+
+    {# Login form errors #}
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">Errors</h4>
+        <p>
+          {{ form.non_field_errors }}
+        </p>
+      </div>
+    {% endif %}
+
+{% endblock layout %}

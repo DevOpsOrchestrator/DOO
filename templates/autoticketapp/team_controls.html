@@ -1,0 +1,6 @@
+{% if perms.autoticketapp.change_team %}
+<a class="btn btn-sm btn-warning" href="{% url 'autoticket:team_edit' record.id %}">Editar</a>
+{% endif %}
+{% if perms.autoticketapp.delete_team %}
+<a class="btn btn-sm btn-danger" href="{% url 'autoticket:team_del' record.id %}">Deletar</a>
+{% endif %}
