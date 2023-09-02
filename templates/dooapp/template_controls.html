@@ -1,0 +1,6 @@
+{% if perms.dooapp.change_template %}
+<a class="btn btn-sm btn-warning" href="{% url 'doo:template_edit' record.id %}">Editar</a>
+{% endif %}
+{% if perms.dooapp.delete_template %}
+<a class="btn btn-sm btn-danger" href="{% url 'doo:template_del' record.id %}">Deletar</a>
+{% endif %}

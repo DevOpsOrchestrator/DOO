@@ -5,12 +5,12 @@ from users.querysets import RestrictedQuerySet
 from ..models import  Ticket,Team, Group, Service, Template
 from . import serializers
 
-class AutoTicketRootView(APIRootView):
+class dooRootView(APIRootView):
     """
-    Raiz do autoticket API
+    Raiz do doo API
     """
     def get_view_name(self):
-        return 'Autoticket'
+        return 'doo'
 
 
 #

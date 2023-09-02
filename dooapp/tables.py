@@ -13,11 +13,11 @@ class BaseTable(tables.Table):
 class TicketTable(tables.Table):
 
     numero = tables.LinkColumn(
-        viewname='autoticket:ticket_detail',
+        viewname='doo:ticket_detail',
         args=[Accessor('id')]
     )
 
-    controls = TemplateColumn(verbose_name=' ', template_name='autoticketapp/ticket_controls.html')
+    controls = TemplateColumn(verbose_name=' ', template_name='dooapp/ticket_controls.html')
 
     class Meta:
         model = Ticket
@@ -28,11 +28,11 @@ class TicketTable(tables.Table):
 class TeamTable(tables.Table):
 
     numero = tables.LinkColumn(
-        viewname='autoticket:team_detail',
+        viewname='doo:team_detail',
         args=[Accessor('id')]
     )
 
-    controls = TemplateColumn(verbose_name=' ', template_name='autoticketapp/team_controls.html')
+    controls = TemplateColumn(verbose_name=' ', template_name='dooapp/team_controls.html')
 
     class Meta:
         model = Team
@@ -42,11 +42,11 @@ class TeamTable(tables.Table):
 class GroupTable(tables.Table):
 
     numero = tables.LinkColumn(
-        viewname='autoticket:group_detail',
+        viewname='doo:group_detail',
         args=[Accessor('id')]
     )
 
-    controls = TemplateColumn(verbose_name=' ', template_name='autoticketapp/group_controls.html')
+    controls = TemplateColumn(verbose_name=' ', template_name='dooapp/group_controls.html')
 
     class Meta:
         model = Group
@@ -56,11 +56,11 @@ class GroupTable(tables.Table):
 class ServiceTable(tables.Table):
 
     numero = tables.LinkColumn(
-        viewname='autoticket:service_detail',
+        viewname='doo:service_detail',
         args=[Accessor('id')]
     )
 
-    controls = TemplateColumn(verbose_name=' ', template_name='autoticketapp/service_controls.html')
+    controls = TemplateColumn(verbose_name=' ', template_name='dooapp/service_controls.html')
 
     class Meta:
         model = Group
@@ -70,11 +70,11 @@ class ServiceTable(tables.Table):
 class TemplateTable(tables.Table):
 
     # numero = tables.LinkColumn(
-    #     viewname='autoticket:template_detail',
+    #     viewname='doo:template_detail',
     #     args=[Accessor('id')]
     # )
 
-    controls = TemplateColumn(verbose_name=' ', template_name='autoticketapp/template_controls.html')
+    controls = TemplateColumn(verbose_name=' ', template_name='dooapp/template_controls.html')
 
     class Meta:
         model = Template

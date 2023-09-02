@@ -13,7 +13,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 # setup environment variable  
-ENV DockerHOME=/home/app/autoticket
+ENV DockerHOME=/home/app/doo
 ENV Repository=/home/app/repository
 
 # set work directory  
@@ -39,4 +39,4 @@ RUN pip install -r requirements.txt
 EXPOSE 8000 
 
 # start server  
-CMD [ "/home/app/autoticket/docker-entrypoint.sh"]
+CMD [ "/home/app/doo/docker-entrypoint.sh"]

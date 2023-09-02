@@ -41,131 +41,131 @@ class TicketDetailView (DetailView):
     model = Ticket
 
 class TicketListView(TableView):
-    permission_required = 'autoticketapp.view_ticket'
+    permission_required = 'dooapp.view_ticket'
     model = Ticket
     table_class = TicketTable
-    template_name = 'autoticketapp/ticket_list.html'
+    template_name = 'dooapp/ticket_list.html'
     ordering = ['-id']
 
 class TicketCreateView(CreateView):
-    permission_required = 'autoticketapp.add_ticket'
+    permission_required = 'dooapp.add_ticket'
     model = Ticket
     fields = ["numero","titulo","descricao","prioridade"]
-    template_name = "autoticketapp/ticket_form.html"
+    template_name = "dooapp/ticket_form.html"
 
 class TicketUpdateView(UpdateView):
-    permission_required = 'autoticket.change_ticket'
+    permission_required = 'doo.change_ticket'
     model = Ticket
     fields = ["numero","titulo","descricao","prioridade"]
-    template_name = "autoticketapp/ticket_form.html"
+    template_name = "dooapp/ticket_form.html"
 
 class TicketDeleteView(DeleteView):
-    permission_required = 'autoticket.delete_ticket'
+    permission_required = 'doo.delete_ticket'
     model = Ticket
-    template_name = "autoticketapp/confirm_delete.html"
+    template_name = "dooapp/confirm_delete.html"
 
 """
     Classes refering to the Team views
 """
 
-TEAM_URL = '/autoticket/team'
+TEAM_URL = '/doo/team'
 
 class TeamDetailView (DetailView):
     model = Team
 
 class TeamListView(TableView):
-    permission_required = 'autoticketapp.view_team'
+    permission_required = 'dooapp.view_team'
     model = Team
     table_class = TeamTable
-    template_name = 'autoticketapp/team_list.html'
+    template_name = 'dooapp/team_list.html'
 
 class TeamCreateView(CreateView):
-    permission_required = 'autoticket.add_team'
+    permission_required = 'doo.add_team'
     model = Team
     fields = ["nome"]
-    template_name = "autoticketapp/team_form.html"
+    template_name = "dooapp/team_form.html"
     success_url = TEAM_URL
 
 class TeamUpdateView(UpdateView):
-    permission_required = 'autoticket.change_team'
+    permission_required = 'doo.change_team'
     model = Team
     fields = ["nome"]
-    template_name = "autoticketapp/team_form.html"
+    template_name = "dooapp/team_form.html"
     success_url = TEAM_URL
 
 class TeamDeleteView(DeleteView):
-    permission_required = 'autoticket.delete_team'
+    permission_required = 'doo.delete_team'
     model = Team
-    template_name = "autoticketapp/confirm_delete.html"
+    template_name = "dooapp/confirm_delete.html"
     success_url = TEAM_URL
     
 """
     Classes refering to the Group views
 """  
 
-GROUP_URL = '/autoticket/group'
+GROUP_URL = '/doo/group'
 
 class GroupDetailView (DetailView):
     model = Group
 
 class GroupListView(TableView):
-    permission_required = 'autoticketapp.view_group'
+    permission_required = 'dooapp.view_group'
     model = Group
     table_class = GroupTable
-    template_name = 'autoticketapp/group_list.html'
+    template_name = 'dooapp/group_list.html'
 
 class GroupCreateView(CreateView):
-    permission_required = 'autoticket.add_group'
+    permission_required = 'doo.add_group'
     model = Group
     fields = ["nome", "equipe"]
-    template_name = "autoticketapp/group_form.html"
+    template_name = "dooapp/group_form.html"
     success_url = GROUP_URL
 
 class GroupUpdateView(UpdateView):
-    permission_required = 'autoticket.change_group'
+    permission_required = 'doo.change_group'
     model = Group
     fields = ["nome", "equipe"]
-    template_name = "autoticketapp/group_form.html"
+    template_name = "dooapp/group_form.html"
     success_url = GROUP_URL
 
 class GroupDeleteView(DeleteView):
-    permission_required = 'autoticket.delete_group'
+    permission_required = 'doo.delete_group'
     model = Group
-    template_name = "autoticketapp/confirm_delete.html"
+    template_name = "dooapp/confirm_delete.html"
     success_url = GROUP_URL
    
 """
     Classes refering to the Group views
 """  
-SERVICE_URL = '/autoticket/service'
+SERVICE_URL = '/doo/service'
 
 class ServiceDetailView (DetailView):
     model = Service
 
 class ServiceListView(TableView):
-    permission_required = 'autoticketapp.view_service'
+    permission_required = 'dooapp.view_service'
     model = Service
     table_class = ServiceTable
-    template_name = 'autoticketapp/service_list.html'
+    template_name = 'dooapp/service_list.html'
 
 class ServiceCreateView(CreateView):
-    permission_required = 'autoticket.add_service'
+    permission_required = 'doo.add_service'
     model = Service
     fields = ["nome", "status","grupo"]
-    template_name = "autoticketapp/service_form.html"
+    template_name = "dooapp/service_form.html"
     success_url = SERVICE_URL
 
 class ServiceUpdateView(UpdateView):
-    permission_required = 'autoticket.change_service'
+    permission_required = 'doo.change_service'
     model = Service
     fields = ["nome", "status", "grupo"]
-    template_name = "autoticketapp/service_form.html"
+    template_name = "dooapp/service_form.html"
     success_url = SERVICE_URL
 
 class ServiceDeleteView(DeleteView):
-    permission_required = 'autoticket.delete_service'
+    permission_required = 'doo.delete_service'
     model = Service
-    template_name = "autoticketapp/confirm_delete.html"
+    template_name = "dooapp/confirm_delete.html"
     success_url = SERVICE_URL
    
    
@@ -173,35 +173,35 @@ class ServiceDeleteView(DeleteView):
     Classes refering to the Template views
 """
 
-TEMPLATE_URL = '/autoticket/template/'
+TEMPLATE_URL = '/doo/template/'
 
 class TemplateDetailView (DetailView):
     model = Template
 
 class TemplateListView(TableView):
-    permission_required = 'autoticket.view_template'
+    permission_required = 'doo.view_template'
     model = Template
     table_class = TemplateTable
-    template_name = 'autoticketapp/template_list.html'
+    template_name = 'dooapp/template_list.html'
 
 class TemplateCreateView(CreateView):
-    permission_required = 'autoticketapp.add_template'
+    permission_required = 'dooapp.add_template'
     model = Template
     fields = ["titulo", "codigo"]
-    template_name = "autoticketapp/template_form.html"
+    template_name = "dooapp/template_form.html"
     success_url = TEMPLATE_URL
 
 class TemplateUpdateView(UpdateView):
-    permission_required = 'autoticket.change_template'
+    permission_required = 'doo.change_template'
     model = Template
     fields = ["titulo", "codigo"]
-    template_name = "autoticketapp/template_form.html"
+    template_name = "dooapp/template_form.html"
     success_url = TEMPLATE_URL
 
 class TemplateDeleteView(DeleteView):
-    permission_required = 'autoticket.delete_template'
+    permission_required = 'doo.delete_template'
     model = Template
-    template_name = "autoticketapp/confirm_delete.html"
+    template_name = "dooapp/confirm_delete.html"
     success_url = TEMPLATE_URL
 
 """
@@ -209,7 +209,7 @@ class TemplateDeleteView(DeleteView):
 """
 
 class ProvisionStart(View):
-    template_name = 'autoticketapp/provision.html'
+    template_name = 'dooapp/provision.html'
 
     def get(self, request, idTicket):
         user = request.user
@@ -225,7 +225,7 @@ class ProvisionStart(View):
 
 # View of report generation
 class TeamReportView(RestView):
-    template_name = 'autoticketapp/report.html'
+    template_name = 'dooapp/report.html'
     
     def get(self, request):
         data = team_report()
@@ -238,7 +238,7 @@ class TeamReportView(RestView):
             'template_count': serializer['template_count'],
         })
 class CatalogView(View):
-    template_name = 'autoticketapp/catalog.html'
+    template_name = 'dooapp/catalog.html'
 
     def get(self, request):
 

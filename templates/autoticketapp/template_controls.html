@@ -1,6 +1,0 @@
-{% if perms.autoticketapp.change_template %}
-<a class="btn btn-sm btn-warning" href="{% url 'autoticket:template_edit' record.id %}">Editar</a>
-{% endif %}
-{% if perms.autoticketapp.delete_template %}
-<a class="btn btn-sm btn-danger" href="{% url 'autoticket:template_del' record.id %}">Deletar</a>
-{% endif %}
