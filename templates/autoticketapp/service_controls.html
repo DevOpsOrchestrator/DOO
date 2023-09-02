@@ -1,6 +1,0 @@
-{% if perms.autoticketapp.change_service %}
-<a class="btn btn-sm btn-warning" href="{% url 'autoticket:service_edit' record.id %}">Editar</a>
-{% endif %}
-{% if perms.autoticketapp.delete_service %}
-<a class="btn btn-sm btn-danger" href="{% url 'autoticket:service_del' record.id %}">Deletar</a>
-{% endif %}

@@ -26,7 +26,7 @@ while [ "${CUR_DB_WAIT_TIME}" -lt "${MAX_DB_WAIT_TIME}" ]; do
   else
     readarray -tn 0 DB_ERR_LINES <<<"$DB_ERR"
     echo "${DB_ERR_LINES[@]: -1}"
-    echo "[ Use DB_WAIT_DEBUG=1 in autoticket.env to print full traceback for errors here ]"
+    echo "[ Use DB_WAIT_DEBUG=1 in doo.env to print full traceback for errors here ]"
   fi
   echo "⏳ Waiting on DB... (${CUR_DB_WAIT_TIME}s / ${MAX_DB_WAIT_TIME}s)"
   sleep "${DB_WAIT_TIMEOUT}"

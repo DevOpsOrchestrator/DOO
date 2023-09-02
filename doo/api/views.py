@@ -13,7 +13,7 @@ from users.api.authentication import IsAuthenticatedOrLoginNotRequired
 
 class APIRootView(APIView):
     """
-    Esta é a raiza do autoticket REST API.
+    Esta é a raiza do doo REST API.
     """
     _ignore_model_permissions = True
     exclude_from_schema = True
@@ -26,7 +26,7 @@ class APIRootView(APIView):
 
         return Response(OrderedDict((
             ('users', reverse('users-api:api-root', request=request, format=format)),
-            ('autoticket', reverse('autoticket-api:api-root', request=request, format=format)),
+            ('doo', reverse('doo-api:api-root', request=request, format=format)),
             ('login',  reverse('rest_framework:login', request=request, format=format)),
             ('logout',  reverse('rest_framework:logout', request=request, format=format)),
         )))

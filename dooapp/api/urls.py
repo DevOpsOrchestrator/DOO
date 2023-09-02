@@ -2,10 +2,10 @@ from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 from . import views
 
-app_name = 'autoticket-api'
+app_name = 'doo-api'
 
 router = DefaultRouter()
-router.APIRootView = views.AutoTicketRootView
+router.APIRootView = views.dooRootView
 
 # Ticket
 router.register('ticket', views.TicketViewSet)

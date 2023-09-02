@@ -1,17 +1,17 @@
 from django.contrib import admin
 from django.urls import path, include, re_path
 
-from autoticketapp.views import HomeView
+from dooapp.views import HomeView
 from .api.views import APIRootView, StatusView
 
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 
 openapi_info = openapi.Info(
-    title="Autoticket API",
+    title="doo API",
     default_version='v1',
-    description="API do autoticket",
-    terms_of_service="https://github.com/thiagoalima/autoticket",
+    description="API do doo",
+    terms_of_service="https://github.com/thiagoalima/doo",
     license=openapi.License(name="Apache v2 License"),
 )
 
@@ -22,12 +22,12 @@ schema_view = get_schema_view(
     permission_classes=()
 )
 
-app_name = 'autoticket-api'
+app_name = 'doo-api'
 
 urlpatterns = [
     path('', HomeView.as_view(), name='home'),
-    path('autoticket/', include('autoticketapp.urls')),
-    path('autoticket/users', include('users.urls')),
+    path('doo/', include('dooapp.urls')),
+    path('doo/users', include('users.urls')),
     path('repository/', include('repository.urls')),
     path('iac/', include('iac.urls')),
     path('admin/', admin.site.urls),
@@ -36,7 +36,7 @@ urlpatterns = [
     path('api/', APIRootView.as_view(), name='api-root'),
     path('api/auth/', include('rest_framework.urls')),
     path('api/users/', include('users.api.urls')),
-    path('api/autoticket/', include('autoticketapp.api.urls')),
+    path('api/doo/', include('dooapp.api.urls')),
     path('api/status/', StatusView.as_view(), name='api-status'),
     path('api/docs/', schema_view.with_ui('swagger', cache_timeout=86400), name='api_docs'),
     path('api/redoc/', schema_view.with_ui('redoc', cache_timeout=86400), name='api_redocs'),

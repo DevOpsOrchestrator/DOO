@@ -4,7 +4,7 @@ from django.views.generic.detail import DetailView
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django_tables2 import SingleTableView
 
-DEFAULT_URL_SUCCESS = "/autoticket/ticket/"
+DEFAULT_URL_SUCCESS = "/doo/ticket/"
 
 class BaseView(PermissionRequiredMixin):
     

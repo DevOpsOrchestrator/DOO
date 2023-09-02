@@ -1,0 +1,6 @@
+{% if perms.dooapp.change_team %}
+<a class="btn btn-sm btn-warning" href="{% url 'doo:team_edit' record.id %}">Editar</a>
+{% endif %}
+{% if perms.dooapp.delete_team %}
+<a class="btn btn-sm btn-danger" href="{% url 'doo:team_del' record.id %}">Deletar</a>
+{% endif %}

@@ -20,7 +20,7 @@ from .models import Token
 
 from .forms import TokenForm
 
-SUCCESS_URL ='/autoticket/usersapi-tokens/'
+SUCCESS_URL ='/doo/usersapi-tokens/'
 
 #
 # Login/logout
@@ -93,7 +93,7 @@ class LogoutView(View):
         messages.info(request, "Você foi deslogado.")
 
         # Delete session key cookie (if set) upon logout
-        response = HttpResponseRedirect(reverse('autoticket:home'))
+        response = HttpResponseRedirect(reverse('doo:home'))
         response.delete_cookie('session_key')
 
         return response

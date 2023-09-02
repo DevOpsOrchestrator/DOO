@@ -5,8 +5,8 @@
 <div class="row justify-content-end" >
     <div class="col-10"></div>
     <div class="col-2">
-        {% if perms.autoticketapp.add_template %}
-        <a href="{% url 'autoticket:template_add' %}" type="button" class="btn btn-sm btn-success">
+        {% if perms.dooapp.add_group %}
+        <a href="{% url 'doo:group_add' %}" type="button" class="btn btn-sm btn-success">
             <i class="mdi mdi-plus-thick"></i> Adicionar
         </a>
         {% endif %}

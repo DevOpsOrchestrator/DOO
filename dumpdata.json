@@ -219,144 +219,144 @@
   "model": "auth.permission",
   "pk": 25,
   "fields": {
-    "name": "Can add ticket",
+    "name": "Can add group",
     "content_type": 7,
-    "codename": "add_ticket"
+    "codename": "add_group"
   }
 },
 {
   "model": "auth.permission",
   "pk": 26,
   "fields": {
-    "name": "Can change ticket",
+    "name": "Can change group",
     "content_type": 7,
-    "codename": "change_ticket"
+    "codename": "change_group"
   }
 },
 {
   "model": "auth.permission",
   "pk": 27,
   "fields": {
-    "name": "Can delete ticket",
+    "name": "Can delete group",
     "content_type": 7,
-    "codename": "delete_ticket"
+    "codename": "delete_group"
   }
 },
 {
   "model": "auth.permission",
   "pk": 28,
   "fields": {
-    "name": "Can view ticket",
+    "name": "Can view group",
     "content_type": 7,
-    "codename": "view_ticket"
+    "codename": "view_group"
   }
 },
 {
   "model": "auth.permission",
   "pk": 29,
   "fields": {
-    "name": "Can add group",
+    "name": "Can add service",
     "content_type": 8,
-    "codename": "add_group"
+    "codename": "add_service"
   }
 },
 {
   "model": "auth.permission",
   "pk": 30,
   "fields": {
-    "name": "Can change group",
+    "name": "Can change service",
     "content_type": 8,
-    "codename": "change_group"
+    "codename": "change_service"
   }
 },
 {
   "model": "auth.permission",
   "pk": 31,
   "fields": {
-    "name": "Can delete group",
+    "name": "Can delete service",
     "content_type": 8,
-    "codename": "delete_group"
+    "codename": "delete_service"
   }
 },
 {
   "model": "auth.permission",
   "pk": 32,
   "fields": {
-    "name": "Can view group",
+    "name": "Can view service",
     "content_type": 8,
-    "codename": "view_group"
+    "codename": "view_service"
   }
 },
 {
   "model": "auth.permission",
   "pk": 33,
   "fields": {
-    "name": "Can add service",
+    "name": "Can add team",
     "content_type": 9,
-    "codename": "add_service"
+    "codename": "add_team"
   }
 },
 {
   "model": "auth.permission",
   "pk": 34,
   "fields": {
-    "name": "Can change service",
+    "name": "Can change team",
     "content_type": 9,
-    "codename": "change_service"
+    "codename": "change_team"
   }
 },
 {
   "model": "auth.permission",
   "pk": 35,
   "fields": {
-    "name": "Can delete service",
+    "name": "Can delete team",
     "content_type": 9,
-    "codename": "delete_service"
+    "codename": "delete_team"
   }
 },
 {
   "model": "auth.permission",
   "pk": 36,
   "fields": {
-    "name": "Can view service",
+    "name": "Can view team",
     "content_type": 9,
-    "codename": "view_service"
+    "codename": "view_team"
   }
 },
 {
   "model": "auth.permission",
   "pk": 37,
   "fields": {
-    "name": "Can add team",
+    "name": "Can add ticket",
     "content_type": 10,
-    "codename": "add_team"
+    "codename": "add_ticket"
   }
 },
 {
   "model": "auth.permission",
   "pk": 38,
   "fields": {
-    "name": "Can change team",
+    "name": "Can change ticket",
     "content_type": 10,
-    "codename": "change_team"
+    "codename": "change_ticket"
   }
 },
 {
   "model": "auth.permission",
   "pk": 39,
   "fields": {
-    "name": "Can delete team",
+    "name": "Can delete ticket",
     "content_type": 10,
-    "codename": "delete_team"
+    "codename": "delete_ticket"
   }
 },
 {
   "model": "auth.permission",
   "pk": 40,
   "fields": {
-    "name": "Can view team",
+    "name": "Can view ticket",
     "content_type": 10,
-    "codename": "view_team"
+    "codename": "view_ticket"
   }
 },
 {
@@ -507,108 +507,108 @@
   "model": "auth.permission",
   "pk": 57,
   "fields": {
-    "name": "Can add token",
+    "name": "Can add User Preferences",
     "content_type": 15,
-    "codename": "add_token"
+    "codename": "add_userconfig"
   }
 },
 {
   "model": "auth.permission",
   "pk": 58,
   "fields": {
-    "name": "Can change token",
+    "name": "Can change User Preferences",
     "content_type": 15,
-    "codename": "change_token"
+    "codename": "change_userconfig"
   }
 },
 {
   "model": "auth.permission",
   "pk": 59,
   "fields": {
-    "name": "Can delete token",
+    "name": "Can delete User Preferences",
     "content_type": 15,
-    "codename": "delete_token"
+    "codename": "delete_userconfig"
   }
 },
 {
   "model": "auth.permission",
   "pk": 60,
   "fields": {
-    "name": "Can view token",
+    "name": "Can view User Preferences",
     "content_type": 15,
-    "codename": "view_token"
+    "codename": "view_userconfig"
   }
 },
 {
   "model": "auth.permission",
   "pk": 61,
   "fields": {
-    "name": "Can add permission",
+    "name": "Can add token",
     "content_type": 16,
-    "codename": "add_objectpermission"
+    "codename": "add_token"
   }
 },
 {
   "model": "auth.permission",
   "pk": 62,
   "fields": {
-    "name": "Can change permission",
+    "name": "Can change token",
     "content_type": 16,
-    "codename": "change_objectpermission"
+    "codename": "change_token"
   }
 },
 {
   "model": "auth.permission",
   "pk": 63,
   "fields": {
-    "name": "Can delete permission",
+    "name": "Can delete token",
     "content_type": 16,
-    "codename": "delete_objectpermission"
+    "codename": "delete_token"
   }
 },
 {
   "model": "auth.permission",
   "pk": 64,
   "fields": {
-    "name": "Can view permission",
+    "name": "Can view token",
     "content_type": 16,
-    "codename": "view_objectpermission"
+    "codename": "view_token"
   }
 },
 {
   "model": "auth.permission",
   "pk": 65,
   "fields": {
-    "name": "Can add User Preferences",
+    "name": "Can add permission",
     "content_type": 17,
-    "codename": "add_userconfig"
+    "codename": "add_objectpermission"
   }
 },
 {
   "model": "auth.permission",
   "pk": 66,
   "fields": {
-    "name": "Can change User Preferences",
+    "name": "Can change permission",
     "content_type": 17,
-    "codename": "change_userconfig"
+    "codename": "change_objectpermission"
   }
 },
 {
   "model": "auth.permission",
   "pk": 67,
   "fields": {
-    "name": "Can delete User Preferences",
+    "name": "Can delete permission",
     "content_type": 17,
-    "codename": "delete_userconfig"
+    "codename": "delete_objectpermission"
   }
 },
 {
   "model": "auth.permission",
   "pk": 68,
   "fields": {
-    "name": "Can view User Preferences",
+    "name": "Can view permission",
     "content_type": 17,
-    "codename": "view_userconfig"
+    "codename": "view_objectpermission"
   }
 },
 {
@@ -651,72 +651,72 @@
   "model": "auth.permission",
   "pk": 73,
   "fields": {
-    "name": "Can add type input",
+    "name": "Can add ansible module",
     "content_type": 19,
-    "codename": "add_typeinput"
+    "codename": "add_ansiblemodule"
   }
 },
 {
   "model": "auth.permission",
   "pk": 74,
   "fields": {
-    "name": "Can change type input",
+    "name": "Can change ansible module",
     "content_type": 19,
-    "codename": "change_typeinput"
+    "codename": "change_ansiblemodule"
   }
 },
 {
   "model": "auth.permission",
   "pk": 75,
   "fields": {
-    "name": "Can delete type input",
+    "name": "Can delete ansible module",
     "content_type": 19,
-    "codename": "delete_typeinput"
+    "codename": "delete_ansiblemodule"
   }
 },
 {
   "model": "auth.permission",
   "pk": 76,
   "fields": {
-    "name": "Can view type input",
+    "name": "Can view ansible module",
     "content_type": 19,
-    "codename": "view_typeinput"
+    "codename": "view_ansiblemodule"
   }
 },
 {
   "model": "auth.permission",
   "pk": 77,
   "fields": {
-    "name": "Can add inventory parameter",
+    "name": "Can add type input",
     "content_type": 20,
-    "codename": "add_inventoryparameter"
+    "codename": "add_typeinput"
   }
 },
 {
   "model": "auth.permission",
   "pk": 78,
   "fields": {
-    "name": "Can change inventory parameter",
+    "name": "Can change type input",
     "content_type": 20,
-    "codename": "change_inventoryparameter"
+    "codename": "change_typeinput"
   }
 },
 {
   "model": "auth.permission",
   "pk": 79,
   "fields": {
-    "name": "Can delete inventory parameter",
+    "name": "Can delete type input",
     "content_type": 20,
-    "codename": "delete_inventoryparameter"
+    "codename": "delete_typeinput"
   }
 },
 {
   "model": "auth.permission",
   "pk": 80,
   "fields": {
-    "name": "Can view inventory parameter",
+    "name": "Can view type input",
     "content_type": 20,
-    "codename": "view_inventoryparameter"
+    "codename": "view_typeinput"
   }
 },
 {
@@ -759,36 +759,36 @@
   "model": "auth.permission",
   "pk": 85,
   "fields": {
-    "name": "Can add ansible module",
+    "name": "Can add inventory parameter",
     "content_type": 22,
-    "codename": "add_ansiblemodule"
+    "codename": "add_inventoryparameter"
   }
 },
 {
   "model": "auth.permission",
   "pk": 86,
   "fields": {
-    "name": "Can change ansible module",
+    "name": "Can change inventory parameter",
     "content_type": 22,
-    "codename": "change_ansiblemodule"
+    "codename": "change_inventoryparameter"
   }
 },
 {
   "model": "auth.permission",
   "pk": 87,
   "fields": {
-    "name": "Can delete ansible module",
+    "name": "Can delete inventory parameter",
     "content_type": 22,
-    "codename": "delete_ansiblemodule"
+    "codename": "delete_inventoryparameter"
   }
 },
 {
   "model": "auth.permission",
   "pk": 88,
   "fields": {
-    "name": "Can view ansible module",
+    "name": "Can view inventory parameter",
     "content_type": 22,
-    "codename": "view_ansiblemodule"
+    "codename": "view_inventoryparameter"
   }
 },
 {
@@ -825,24 +825,6 @@
     "name": "Can view ansible module variable",
     "content_type": 23,
     "codename": "view_ansiblemodulevariable"
-  }
-},
-{
-  "model": "auth.user",
-  "pk": 1,
-  "fields": {
-    "password": "pbkdf2_sha256$600000$8KEvPxjlxOFTc6ISd24LKK$2Slm4DK1SPLDL2Uj2wjM26p1k1MqaMwh5JcxCp/g8aU=",
-    "last_login": "2023-05-19T12:57:38.065Z",
-    "is_superuser": true,
-    "username": "admin",
-    "first_name": "",
-    "last_name": "",
-    "email": "",
-    "is_staff": true,
-    "is_active": true,
-    "date_joined": "2023-05-19T12:57:16.672Z",
-    "groups": [],
-    "user_permissions": []
   }
 },
 {
@@ -897,39 +879,39 @@
   "model": "contenttypes.contenttype",
   "pk": 7,
   "fields": {
-    "app_label": "autoticketapp",
-    "model": "ticket"
+    "app_label": "dooapp",
+    "model": "group"
   }
 },
 {
   "model": "contenttypes.contenttype",
   "pk": 8,
   "fields": {
-    "app_label": "autoticketapp",
-    "model": "group"
+    "app_label": "dooapp",
+    "model": "service"
   }
 },
 {
   "model": "contenttypes.contenttype",
   "pk": 9,
   "fields": {
-    "app_label": "autoticketapp",
-    "model": "service"
+    "app_label": "dooapp",
+    "model": "team"
   }
 },
 {
   "model": "contenttypes.contenttype",
   "pk": 10,
   "fields": {
-    "app_label": "autoticketapp",
-    "model": "team"
+    "app_label": "dooapp",
+    "model": "ticket"
   }
 },
 {
   "model": "contenttypes.contenttype",
   "pk": 11,
   "fields": {
-    "app_label": "autoticketapp",
+    "app_label": "dooapp",
     "model": "template"
   }
 },
@@ -937,7 +919,7 @@
   "model": "contenttypes.contenttype",
   "pk": 12,
   "fields": {
-    "app_label": "autoticketapp",
+    "app_label": "dooapp",
     "model": "provision"
   }
 },
@@ -962,7 +944,7 @@
   "pk": 15,
   "fields": {
     "app_label": "users",
-    "model": "token"
+    "model": "userconfig"
   }
 },
 {
@@ -970,7 +952,7 @@
   "pk": 16,
   "fields": {
     "app_label": "users",
-    "model": "objectpermission"
+    "model": "token"
   }
 },
 {
@@ -978,7 +960,7 @@
   "pk": 17,
   "fields": {
     "app_label": "users",
-    "model": "userconfig"
+    "model": "objectpermission"
   }
 },
 {
@@ -994,7 +976,7 @@
   "pk": 19,
   "fields": {
     "app_label": "iac",
-    "model": "typeinput"
+    "model": "ansiblemodule"
   }
 },
 {
@@ -1002,7 +984,7 @@
   "pk": 20,
   "fields": {
     "app_label": "iac",
-    "model": "inventoryparameter"
+    "model": "typeinput"
   }
 },
 {
@@ -1018,7 +1000,7 @@
   "pk": 22,
   "fields": {
     "app_label": "iac",
-    "model": "ansiblemodule"
+    "model": "inventoryparameter"
   }
 },
 {
@@ -1027,22 +1009,6 @@
   "fields": {
     "app_label": "iac",
     "model": "ansiblemodulevariable"
-  }
-},
-{
-  "model": "sessions.session",
-  "pk": "1p5z5qwg549cujflgz12mpn6lyedmj0w",
-  "fields": {
-    "session_data": ".eJxVjEEOwiAQRe_C2jRDShlw6QXsDcgAQ0AjJoWujHe3JC50-d_7eS_haO_Z7Y03V6I4CylOv8xTuHMdYsw2DcO1l0C9POt09TcOfeXtUVo7wOV7_2tkavkIRI8-KQtkEBkjAKgU7LIAKs2EMrBajPKogJJPIG1iCsAmEWg9x1m8PwTQOiU:1pzzfu:XmATDwnCsGJUQKMmVKZVMK-DKaPT1yOYo0eszG2DKrM",
-    "expire_date": "2023-06-02T12:57:38.074Z"
-  }
-},
-{
-  "model": "users.userconfig",
-  "pk": 1,
-  "fields": {
-    "user": 1,
-    "data": {}
   }
 },
 {
