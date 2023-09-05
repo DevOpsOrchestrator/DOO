@@ -10,8 +10,9 @@ services:
     container_name: ${DOO_NAME}
     hostname: ${DOO_NAME}
     environment:
-      REPOSITORY: ${REPOSITORY}
+      DEBUG: ${DEBUG}
       DJANGO_DEBUG: ${DJANGO_DEBUG}
+      REPOSITORY: ${REPOSITORY}
       DB_NAME: ${POSTGRES_DB}
       DB_PASSWORD: ${POSTGRES_PASSWORD}
       DB_USER: ${POSTGRES_USER}

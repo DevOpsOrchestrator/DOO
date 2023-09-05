@@ -11,12 +11,16 @@ def main():
     from django.conf import settings
 
     if settings.DEBUG:
-        if os.environ.get('DJANGO_DEBUG') and 'runserver' in sys.argv:
+        if os.environ.get('DJANGO_DEBUG','False').lower() in ('true','yes','1','t','y') and 'runserver' in sys.argv:
             import debugpy
-            print('DEBUG ESCUTANDO NA PORTA 3000!')
-            debugpy.listen(("0.0.0.0", 3000))
-            debugpy.wait_for_client()
-            print('Attached!')
+
+            try:
+                print('DEBUG ESCUTANDO NA PORTA 3000!')
+                debugpy.listen(("0.0.0.0", 3000))
+                debugpy.wait_for_client()
+                print('Attached!')
+            except Exception as erro:
+                pass
 
     try:
         from django.core.management import execute_from_command_line

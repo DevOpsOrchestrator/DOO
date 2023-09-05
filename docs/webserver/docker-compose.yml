@@ -1,0 +1,100 @@
+version: '3'
+networks:
+  validacao1:
+    name: ${NETWORK_NAME}
+    ipam:
+      config:
+        - subnet: 172.25.0.0/24
+services:
+  postgres:
+    image: postgres:${POSTGRESQL_VERSION}
+    container_name: ${POSTGRESQL_NAME}
+    hostname: ${POSTGRESQL_HOST}
+    ports:
+      - ${POSTGRESQL_PORT_EXTERNAL}:5432
+    networks:
+      validacao1:
+        ipv4_address: 172.25.0.5
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      TZ: "America/Fortaleza"
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 30s
+      retries: 10
+
+  doo:
+    ports:
+      - 8000:8000
+      - 3000:3000
+    image: 
+      devopsorchestrator/doo:latest
+    container_name: ${DOO_NAME}
+    hostname: ${DOO_NAME}
+    networks:
+      validacao1:
+        ipv4_address: 172.25.0.6
+    environment:
+      DEBUG: ${DEBUG}
+      DJANGO_DEBUG: ${DJANGO_DEBUG}
+      DB_NAME: ${POSTGRES_DB}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_USER: ${POSTGRES_USER}
+      DB_HOST: ${POSTGRESQL_NAME}
+      DB_WAIT_DEBUG: ${DB_WAIT_DEBUG}
+      SECRET_KEY: ${SECRET_KEY}
+      SKIP_SUPERUSER: ${SKIP_SUPERUSER}
+      SUPERUSER_API_TOKEN: ${SUPERUSER_API_TOKEN}
+      SUPERUSER_EMAIL: ${SUPERUSER_EMAIL}
+      SUPERUSER_NAME: ${SUPERUSER_NAME}
+      SUPERUSER_PASSWORD: ${SUPERUSER_PASSWORD}
+    depends_on:
+    - postgres
+
+  gitlab:
+    image: 'gitlab/gitlab-ce:latest'
+    restart: always
+    container_name: ${GITLAB_NAME}
+    hostname: ${GITLAB_NAME}
+    networks:
+      validacao1:
+        ipv4_address: 172.25.0.7
+    environment:
+      GITLAB_OMNIBUS_CONFIG: "external_url 'http://172.25.0.7'"
+      GITLAB_ROOT_PASSWORD: "112233doo"
+      GITLAB_SHARED_RUNNERS_REGISTRATION_TOKEN: ${REGISTRATION_TOKEN}
+    ports:
+      - '80:80'
+      - '443:443'
+    shm_size: '256m'
+
+  gitlab-runner:
+    image: 'thiagoabreulima/gitlab_runner:latest'
+    restart: always
+    container_name: ${RUNNER_NAME}
+    hostname: ${RUNNER_NAME}
+    networks:
+      validacao1:
+        ipv4_address: 172.25.0.8
+    environment:
+      - CI_SERVER_URL=${CI_SERVER_URL}
+      - REGISTRATION_TOKEN=${REGISTRATION_TOKEN}
+    depends_on:
+    - gitlab
+
+  webserver:
+    image: 'thiagoabreulima/validacao:latest'
+    build: .
+    tty: true
+    container_name: webserver
+    hostname: webserver
+    ports:
+      - "9922:22"
+    networks:
+      validacao1:
+        ipv4_address: 172.25.0.9
+    
