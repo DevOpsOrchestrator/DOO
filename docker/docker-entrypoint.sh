@@ -80,7 +80,10 @@ END
   echo "💡 Superuser Username: ${SUPERUSER_NAME}, E-Mail: ${SUPERUSER_EMAIL}"
 fi
 
-echo " iniciando!"
+echo "Collecting static"
+./manage.py collectstatic 
+
+echo " starting!"
 # Run the startup scripts (and initializers)
 ./manage.py runserver 0.0.0.0:8000 --noreload
 
