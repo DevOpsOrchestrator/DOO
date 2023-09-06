@@ -2,6 +2,7 @@
 import shutil
 import os
 import configparser
+import stat
 from datetime import datetime
 import yaml
 from ansible import constants as C
@@ -50,7 +51,10 @@ class Repository(models.Model):
         return settings.FOLDER_REPOSITORY+'/'+self.nome
     
     def urlGit(self):
-        return f'http://{self.token}:{self.token_key}@{self.url}'
+        urlSplit = self.url.split("://")
+        method = urlSplit[0]
+        url = urlSplit[1]
+        return f'{method}://{self.token}:{self.token_key}@{url}'
     
     def commitAndPush(self):
         dataAtual= datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
@@ -95,6 +99,7 @@ class Repository(models.Model):
             vault_script = str(settings.BASE_DIR)+'/vault.py'
             #TODO: Tem que ter permissão de execução no gitrunner!
             shutil.copyfile(vault_script, self.folderRepository()+'/vault.py')
+            os.chmod(self.folderRepository()+'/vault.py',0o775)
             
             #criar um projeto em branco 
             cli = GalaxyCLI(args=["ansible-galaxy", "init", self.nome,"--init-path", self.folderRepository()+'/roles',"--force"])
