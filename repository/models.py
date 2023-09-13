@@ -81,16 +81,24 @@ class Repository(models.Model):
 
             if not os.path.exists(self.folderRepository()+'/group_vars'):
                 os.makedirs(self.folderRepository()+'/group_vars')
-
+                with open(self.folderRepository()+'/group_vars/.gitkeep', 'w') as creating_gitkeep: 
+                    pass
+            
             if not os.path.exists(self.folderRepository()+'/host_vars'):   
                 os.makedirs(self.folderRepository()+'/host_vars')
+                with open(self.folderRepository()+'/host_vars/.gitkeep', 'w') as creating_gitkeep: 
+                    pass
                 
             if not os.path.exists(self.folderRepository()+'/files'):   
                 os.makedirs(self.folderRepository()+'/files')
+                with open(self.folderRepository()+'/files/.gitkeep', 'w') as creating_gitkeep: 
+                    pass
             
             #TODO: Tem que ter permissão 600 nessa pasta no gitrunner!
             if not os.path.exists(self.folderRepository()+'/files/keys'):   
                 os.makedirs(self.folderRepository()+'/files/keys')
+                with open(self.folderRepository()+'/files/keys/.gitkeep', 'w') as creating_gitkeep: 
+                    pass 
             
             source_gitlab = str(settings.BASE_DIR)+'/repository/pipeline/.gitlab-ci.yml'
             shutil.copyfile(source_gitlab, self.folderRepository()+'/.gitlab-ci.yml')
