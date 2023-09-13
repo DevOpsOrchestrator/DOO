@@ -81,7 +81,7 @@ END
 fi
 
 echo "Collecting static"
-./manage.py collectstatic 
+./manage.py collectstatic --noinput
 
 echo " starting!"
 # Run the startup scripts (and initializers)
