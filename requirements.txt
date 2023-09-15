@@ -8,7 +8,7 @@ psycopg2-binary==2.9.7
 django_tables2==2.6.0
 
 # Django bootstrap v5
-django-bootstrap-v5==1.0.3
+django-bootstrap-v5==1.0.11
 
 # Django bootstrap icons
 django-bootstrap-icons==0.8.4
