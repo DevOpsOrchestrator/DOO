@@ -118,7 +118,7 @@ def ansibleModuleVariableHTML(request, parametro):
 
     try:
 
-        ansibleModuleVariable = AnsibleModuleVariable.objects.filter(module=int(parametro)) 
+        ansibleModuleVariable = AnsibleModuleVariable.objects.filter(module=int(parametro)).order_by('name')
         html = getHtmlAnsibleModuleVariable(ansibleModuleVariable)
 
         return HttpResponse(html)
