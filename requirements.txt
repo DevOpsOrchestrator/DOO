@@ -1,43 +1,44 @@
 # Django
-django
+django==4.2.5
 
-psycopg2-binary
+#psycopg2 
+psycopg2-binary==2.9.7
 
 # Django Tables
-django_tables2
+django_tables2==2.6.0
 
 # Django bootstrap v5
-django-bootstrap-v5
+django-bootstrap-v5==1.0.3
 
 # Django bootstrap icons
-django-bootstrap-icons
+django-bootstrap-icons==0.8.4
 
 # Django Widget Tweaks
-django-widget-tweaks
+django-widget-tweaks==1.5.0
 
 # django rest framework
-djangorestframework
+djangorestframework==3.14.0
 
 # Crispy Forms
-django-crispy-forms
+django-crispy-forms==2.0
 
 # Crispy Bootstrap5
-crispy-bootstrap5
+crispy-bootstrap5==0.7
 
 # Markdown support for the browsable API.
-markdown       
+markdown==3.4.4       
 
 # Filtering support
-django-filter
+django-filter==23.2
 
 # DRF
-drf-yasg
+drf-yasg==1.21.7
 
 # GitPython
-GitPython
+GitPython==3.1.36
 
 # Ansible
-ansible
+ansible==8.4.0
 
 #Debug
-debugpy
+debugpy==1.8.0
