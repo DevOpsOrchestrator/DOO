@@ -72,9 +72,9 @@ class PlaybookDetailView (DetailView):
     def get(self, request, *args, **kwargs):
         repository = self.get_object()
         playbook_repository = repository.getPlaybookRepository()
-        inventory_parameters = InventoryParameter.objects.all()
-        playbook_parameters = PlaybookParameter.objects.all()
-        ansible_modules = AnsibleModule.objects.all()
+        inventory_parameters = InventoryParameter.objects.all().order_by('name')
+        playbook_parameters = PlaybookParameter.objects.all().order_by('name')
+        ansible_modules = AnsibleModule.objects.all().order_by('name')
 
         context = {'ansibleModules': ansible_modules, 'playbookParameters': playbook_parameters,
                    'inventoryParameters': inventory_parameters, 'playbookRepository': playbook_repository}
