@@ -31,8 +31,7 @@ services:
     ports:
       - 8000:8000
       - 3000:3000
-    image: 
-      devopsorchestrator/doo:latest
+    image: devopsorchestrator/doo:latest
     container_name: ${DOO_NAME}
     hostname: ${DOO_NAME}
     networks:
