@@ -2,7 +2,7 @@
 
 ## Requisitos
 
-1) Python 3.11 ou maior ([Instalação](https://docs.python.org/3/using/index.html));
+1) Python 3.10 ([Instalação](https://docs.python.org/3/using/index.html));
 2) Pip 23 ou maior ([Instalação](https://pip.pypa.io/en/stable/installation/));
 3) Postgresql 15 ou maior ([Download](https://www.postgresql.org/download/));
 4) Gitlab 16 ou maior ([Instalação](https://about.gitlab.com/install/)).

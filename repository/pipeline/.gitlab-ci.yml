@@ -6,4 +6,4 @@ deploy-job:
   script:
     - find files/keys -type f -exec chmod 600 {} +
     - chmod a+x vault.py
-    - ansible-playbook -i hosts main.yaml --vault-id @vault.py
+    - ./script.sh
