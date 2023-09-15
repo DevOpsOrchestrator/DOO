@@ -40,5 +40,8 @@ GitPython==3.1.36
 # Ansible
 ansible==8.4.0
 
+# Ansible Base
+ansible-base==2.10.17
+
 #Debug
 debugpy==1.8.0
