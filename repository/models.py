@@ -20,6 +20,11 @@ from git import Repo
 from .dumper import AnsibleDumperRepository
 from .constants import ATTRIBUTES_TASK, ATTRIBUTES_PLAYBOOK
 
+from dooapp.models import Template
+
+from ansible.config.manager import ConfigManager,find_ini_config_file
+
+
 # Class to handle Repository
 class Repository(models.Model):
     """Class Repository Model"""
@@ -45,6 +50,11 @@ class Repository(models.Model):
     token_key = models.CharField(
         max_length=100,
         verbose_name='Token Key',
+    )
+    
+    templates = models.ManyToManyField(
+        Template,
+        related_name='templates',
     )
     
     def folderRepository(self):
@@ -111,7 +121,7 @@ class Repository(models.Model):
             
             #criar um projeto em branco 
             cli = GalaxyCLI(args=["ansible-galaxy", "init", self.nome,"--init-path", self.folderRepository()+'/roles',"--force"])
-            cli.run()
+            #cli.run()
             
         #bloco de teste
         self.playbookRepository = self.getPlaybookRepository()
@@ -125,7 +135,7 @@ class Repository(models.Model):
     def getPlaybookRepository(self):
         loader = DataLoader()
         loader.set_basedir(self.folderRepository())
-
+  
         plays = []
 
         for playbookFile in os.listdir(self.folderRepository()): 

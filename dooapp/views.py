@@ -1,4 +1,7 @@
+from typing import Any
+from django.http import HttpRequest, HttpResponse
 from django.views.generic import View
+from django.views.generic.edit import FormView
 from django.shortcuts import  render, redirect
 from django.urls import reverse
 from rest_framework.response import Response
@@ -23,6 +26,12 @@ from .tables import (
 )
 
 from .report import team_report, ReportSerializer
+
+from .forms import TemplateForm
+
+from django.contrib.auth.mixins import PermissionRequiredMixin
+
+
 
 class HomeView(View):
     template_name = 'base/home.html'
@@ -185,11 +194,15 @@ class TemplateListView(TableView):
     template_name = 'dooapp/template_list.html'
 
 class TemplateCreateView(CreateView):
-    permission_required = 'dooapp.add_template'
     model = Template
-    fields = ["titulo", "codigo"]
+    form_class = TemplateForm
+    permission_required = 'dooapp.add_template'
     template_name = "dooapp/template_form.html"
     success_url = TEMPLATE_URL
+    
+    def get_success_url(self) -> str:
+        return super().get_success_url()
+    
 
 class TemplateUpdateView(UpdateView):
     permission_required = 'doo.change_template'

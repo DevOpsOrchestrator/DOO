@@ -1,16 +1,35 @@
 """Class Views Repo"""
+from typing import Any
 from users.utilities.view import TableView, CreateView, UpdateView, DeleteView, DetailView
 from django.shortcuts import redirect
-from django.http import HttpResponse
+from django.http import HttpRequest, HttpResponse
 from django.http import JsonResponse
 from django.urls import reverse
+from ansible import context
+from ansible.playbook.play_context import PlayContext
+from ansible.parsing.dataloader import DataLoader
+from ansible.inventory.manager import InventoryManager
+from ansible.vars.manager import VariableManager
+from ansible.playbook.play import Play
 from ansible.playbook.task import Task
+from ansible.playbook.block import Block
 from ansible.playbook.handler import Handler
 from iac.models import InventoryParameter, PlaybookParameter, AnsibleModule
 from iac.views import getHtmlInventoryParameter
 from .tables import RepositoryTable
 from .models import (Repository)
 from .helper import handle_uploaded_file
+from dooapp.models import Service,Template
+from dooapp.forms import TemplateForm
+
+from ansible.playbook import Playbook
+
+from .constants import ATTRIBUTES_TASK, ATTRIBUTES_PLAYBOOK
+
+import yaml
+from .dumper import AnsibleDumperRepository
+
+from django.http import QueryDict
 
 # Classes refering to the Repo views
 
@@ -64,6 +83,61 @@ def get_params(params_dict):
                 params[params_key] = params_dict[line]
     return params
 
+def get_playbook(template):
+    
+    loader = DataLoader()
+    inventory = InventoryManager(loader=loader)
+    variable_manager = VariableManager(loader=loader, inventory=inventory)
+    
+    playbook = None
+    
+    if template.yaml:
+        
+        # Carregue a string YAML usando o DataLoader
+        playbook_yaml = loader.load(template.yaml)
+
+        # Crie um objeto Play com base no conteúdo YAML
+        playbook = Play().load(playbook_yaml[0])
+        
+    else:
+        playbook = Play()
+        setattr(playbook, 'name', template.name)
+        
+    return playbook
+
+def retirar_nulos(data,listAtrribute=None):
+        if listAtrribute:
+            return {k: v for k, v in data.items() if v and k in listAtrribute}
+        return {k: v for k, v in data.items() if v}
+
+def get_string_playbook(playbook):
+    dataPlaybook = []
+
+    validos = retirar_nulos(playbook.serialize(), ATTRIBUTES_PLAYBOOK)
+        
+    data = {'name':validos.pop('name')}
+    data.update(validos)
+    roles = []
+    for r in playbook.roles:
+        roles.append(r._role_name)
+
+    if roles:
+        data['roles'] = roles
+
+    dataPlaybook.append(data)
+        
+    return yaml.dump(dataPlaybook, Dumper=AnsibleDumperRepository, explicit_start=True, explicit_end=True, sort_keys=False, default_flow_style=False, default_style='', allow_unicode=True)
+
+def get_tasks_playbook(playbook):
+
+    json_task = []
+
+    for bk in playbook.tasks:
+        for task in bk.block:
+            json_task.append({'name': task.name, 'action': task.action, task.action: task.args})
+    
+    return json_task
+
 class PlaybookDetailView (DetailView):
     """Class Playbook Detail View"""
     model = Repository
@@ -72,11 +146,12 @@ class PlaybookDetailView (DetailView):
     def get(self, request, *args, **kwargs):
         repository = self.get_object()
         playbook_repository = repository.getPlaybookRepository()
+        services = Service.objects.all().order_by('nome')
         inventory_parameters = InventoryParameter.objects.all().order_by('name')
         playbook_parameters = PlaybookParameter.objects.all().order_by('name')
         ansible_modules = AnsibleModule.objects.all().order_by('name')
 
-        context = {'ansibleModules': ansible_modules, 'playbookParameters': playbook_parameters,
+        context = {'templates': repository.templates.all(), 'formService': TemplateForm, 'services': services, 'ansibleModules': ansible_modules, 'playbookParameters': playbook_parameters,
                    'inventoryParameters': inventory_parameters, 'playbookRepository': playbook_repository}
         return self.render_to_response(context)
 
@@ -196,6 +271,93 @@ class TaskDeleteView(DeleteView):
 
         return redirect_main(repository.pk)
 
+class TaskTemplateDetailView (DetailView):
+    """Class Task Detail View"""
+    model = Template
+    template_name = "repository/playbook_form.html"
+
+    def get(self, request, *args, **kwargs):
+        template = self.get_object()
+        playbook = get_playbook(template)
+        
+        json_task = get_tasks_playbook(playbook)
+
+        return JsonResponse(json_task, safe=False)
+
+
+class TaskTemplateDeleteView(DeleteView):
+    """Class Task Delete View"""
+    model = Template
+    template_name = "repository/playbook_form.html"
+    
+    def delete(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
+        template = self.get_object()
+        playbook = get_playbook(template)
+        
+        params = QueryDict(request.body)
+        deleteTask = params.get('task')
+        
+        blocks = getattr(playbook, 'tasks')
+        remover = None
+        for block in blocks:
+            for task in block.get_tasks():
+                if deleteTask in task.name:
+                    remover = block
+                    blocks.remove(remover)
+                    
+        setattr(playbook, 'tasks', blocks)
+        
+        yamlString = get_string_playbook(playbook) 
+        
+        template.yaml = yamlString
+        
+        template.save() 
+        
+        json_task = get_tasks_playbook(playbook)
+
+        return JsonResponse(json_task, safe=False)
+
+class AddTaskTemplateView(CreateView):
+    """Class Task in Template View"""
+    model = Template
+    template_name = "repository/playbook_form.html"
+
+    def post(self, request, *args, **kwargs):
+        template = self.get_object()
+        
+        playbook = get_playbook(template)
+
+        name = request.POST['name']
+        id_module = request.POST['actionSelect']
+
+        ansible_module = AnsibleModule.objects.get(id=id_module)
+
+        params_data = get_params(request.POST.dict())
+
+        tasks = []
+        
+        for k,v in params_data.items():
+            params_data[k] = "{{"+v+"}}"
+            
+        block = Block()
+        task = Task()
+        setattr(task, 'name', name)
+        setattr(task, 'action', ansible_module.name)
+        setattr(task, 'args', params_data)
+        setattr(block,'block',[task])
+        tasks = getattr(playbook, 'tasks')
+        tasks.append(block)
+        setattr(playbook, 'tasks', tasks)
+        
+        yamlString = get_string_playbook(playbook) 
+        
+        template.yaml = yamlString
+        
+        template.save()
+        
+        json_tasks = get_tasks_playbook(playbook)
+
+        return JsonResponse(json_tasks, safe=False)
 
 class AddTaskPlaybookView(CreateView):
     """Class Add Task in Playbook View"""
@@ -225,13 +387,15 @@ class AddTaskPlaybookView(CreateView):
             if filename in playbook._file_name:
                 for play in playbook.get_plays():
                     if playbook_host == play.get_name():
+                        block = Block()
                         task = Task()
                         setattr(task, 'name', name)
                         setattr(task, 'action', ansible_module.name)
                         setattr(task, 'args', params_data)
                         setattr(task, 'notify', notifications)
+                        setattr(block,'block',[task])
                         tasks = getattr(play, 'tasks')
-                        tasks.append(task)
+                        tasks.append(block)
                         setattr(play, 'tasks', tasks)
 
         playbook_repository.salvarPlaybooks()

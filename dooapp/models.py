@@ -26,6 +26,10 @@ STATUS_CHOICES = (
     (STATUS_INATIVO, "Inativo"),
 )
 
+TYPE_INPUT = (
+    (1, "Text"),
+)
+
 # Class to handle tickets
 class Ticket(models.Model):
 
@@ -110,26 +114,44 @@ class Service(models.Model):
     def __str__(self):
         return self.nome
 
+class FormItens(models.Model):
+    
+    input_type = models.IntegerField(
+        choices=TYPE_INPUT,
+        default=1,
+    )
+    
+    label = models.CharField(
+        max_length=100,
+        verbose_name='label',
+    )
     
 # Class to handle templates
 class Template(models.Model):
     # Um template pode ser usado por vários serviços
-    titulo = models.CharField(
+    name = models.CharField(
         max_length=100,
-        verbose_name='Título',
+        verbose_name='Name',
     )
     
-    codigo = models.TextField(
-        verbose_name='Código',
-    )
-    
-    service = models.ManyToManyField(
+    service = models.ForeignKey(
         Service,
-        related_name='templates',
+        on_delete=models.CASCADE
+    )
+    
+    form_itens = models.ManyToManyField(
+        FormItens,
+        null=True,
+        related_name='form_itens',
+    )
+    
+    yaml = models.TextField(
+        null=True,
     )
 
     def __str__(self):
-        return self.titulo
+        return self.name
+
 
 # Class to handle provision
 class provision(models.Model):

@@ -35,7 +35,7 @@ def getHtmlInventoryParameter(inventoryParameter,value=''):
                     html += '</select> '
     return html
 
-def getHtmlAnsibleModuleVariable(AnsibleModuleVariables):
+def getHtmlAnsibleModuleVariable(AnsibleModuleVariables, modal):
      html = ''
      
      selectHidden = []
@@ -78,10 +78,47 @@ def getHtmlAnsibleModuleVariable(AnsibleModuleVariables):
           html +='</div>'
           
           htmlSelect +=f'<div class="input-group mb-2" > '
-          htmlSelect +=f'<select class="form-select" id="selectOptionHidden" > '
+          htmlSelect +=f'<select class="form-select" id="selectOptionHidden{modal}" > '
           for sh in selectHidden:
                htmlSelect += sh
-          htmlSelect +=f'</select> <button class="btn btn-outline-secondary" type="button" onclick="showOption()" > <span class="bi-plus"> </span> </button>  </div> '
+          htmlSelect +=f'</select> <button class="btn btn-outline-secondary" type="button" onclick="showOption(\'{modal}\')" > <span class="bi-plus"> </span> </button>  </div> '
+
+          
+     return htmlSelect+html
+ 
+def getHtmlAnsibleModuleVariableTemplate(AnsibleModuleVariables):
+     html = ''
+     
+     selectHidden = []
+
+     for ansibleModuleVariable in AnsibleModuleVariables:
+          fontRequired = ' fw-bold ' if ansibleModuleVariable.required else ''
+          required = 'required' if ansibleModuleVariable.required else ''
+          hidden = '' if ansibleModuleVariable.required else 'hidden'
+          htmlSelect = ''
+
+          if not ansibleModuleVariable.required:   
+            selectHidden.append(f'<option value="{ansibleModuleVariable.name}">{ansibleModuleVariable.name}</option> ')
+
+          html +=f'<div id="option{ansibleModuleVariable.name}" class="input-group mb-2" {hidden}> '
+          html +=f'<span class="input-group-text {fontRequired}" >{ansibleModuleVariable.name}</span> '
+
+          html+=f'''
+            <select class="form-select" id="inputTypeSelect">
+                <option selected>Choose Input Type</option>
+                <option value="1">Text</option>
+            </select>
+            <span class="input-group-text" >Label</span>
+            <input type="text" class="form-control" name="param__{ansibleModuleVariable.name}" {required}>
+          '''
+          
+          html +='</div>'
+          
+          htmlSelect +=f'<div class="input-group mb-2" > '
+          htmlSelect +=f'<select class="form-select" id="selectOptionHiddenTemplate" > '
+          for sh in selectHidden:
+               htmlSelect += sh
+          htmlSelect +=f'</select> <button class="btn btn-outline-secondary" type="button" onclick="showOption(\'Template\')" > <span class="bi-plus"> </span> </button>  </div> '
 
           
      return htmlSelect+html
@@ -117,9 +154,20 @@ def playbookParameterHTML(request, parametro):
 def ansibleModuleVariableHTML(request, parametro):
 
     try:
-
+        modal = request.GET['modal'] if 'modal' in request.GET else None
         ansibleModuleVariable = AnsibleModuleVariable.objects.filter(module=int(parametro)).order_by('name')
-        html = getHtmlAnsibleModuleVariable(ansibleModuleVariable)
+        html = getHtmlAnsibleModuleVariable(ansibleModuleVariable, modal)
+
+        return HttpResponse(html)
+    
+    except ObjectDoesNotExist:
+        return None
+    
+def ansibleModuleVariableTemplateHTML(request, parametro):
+
+    try:
+        ansibleModuleVariable = AnsibleModuleVariable.objects.filter(module=int(parametro)).order_by('name')
+        html = getHtmlAnsibleModuleVariableTemplate(ansibleModuleVariable)
 
         return HttpResponse(html)
     

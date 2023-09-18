@@ -30,5 +30,10 @@ urlpatterns = [
     path('playbook/play/handler/add/<pk>',views.AddHandlerPlaybookView.as_view(), name='playbook_handler_add'),
     path('playbook/play/tasks/<pk>',views.TaskDetailView.as_view(), name='playbook_task_detail'),
     path('playbook/play/handlers/<pk>',views.HandlerDetailView.as_view(), name='playbook_handler_detail'),
+    
+    # Template urls
+    path('template/<pk>/tasks',views.TaskTemplateDetailView.as_view(), name='task_template_add'),
+    path('template/<pk>/task/add',views.AddTaskTemplateView.as_view(), name='task_template_add'),
+    path('template/<pk>/task/del',views.TaskTemplateDeleteView.as_view(), name='playbook_task_del'),
 ]   
 

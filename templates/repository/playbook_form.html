@@ -136,6 +136,60 @@
                                 <span class="bi-window-plus"></span>
                                 add Task
                               </button>
+                              <button type="button" class="btn btn-success btn-sm" onclick="addPlaybookTemplate('{{playbookFile|get_item:"_file_name"|basename}}' , '{{playbookFile.get_plays|list_to_string_by_attr:"name,|"}}')">
+                                <span class="bi-window-plus"></span>
+                                add Template
+                              </button>
+                            </td>
+                        </tr>
+                    {% endfor%}
+                </tbody>
+            </table>  
+        </div>
+      </div>
+    </div>
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="playbookFiles">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+          Templates
+        </button>
+      </h2>
+      <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="playbookFiles" data-bs-parent="#accordionPlaybook">
+        <div class="accordion-body">
+            <table class="table caption-top table-responsive">
+              <caption>Template 
+                <button type="button" class="btn btn-primary" onclick="addTemplate()">
+                    <span class="bi-plus"></span>
+                    Add Template
+                </button>
+              </caption>
+              <thead> 
+                <tr>
+                    <th>Template</th>
+                    <th>Service</th>
+                    <th>Actions</th>
+                </tr>
+              </thead>
+                <tbody>
+                    {% for template in templates %}
+                        <tr>
+                            <td>{{template.name}}</td>
+                            <td>
+                              {{template.service.nome}}
+                            </td>
+                            <td>
+                              <button type="button" class="btn btn-success btn-sm">
+                                <span class="bi-journal-arrow-up"></span>
+                                Edit Template
+                              </button>
+                              <button type="button" class="btn btn-success btn-sm" >
+                                <span class="bi-window-plus"></span>
+                                add Hosts
+                              </button>
+                              <button type="button" class="btn btn-success btn-sm" onclick="addTaskTemplate('{{template.id}}')">
+                                <span class="bi-window-plus"></span>
+                                add Template
+                              </button>
                             </td>
                         </tr>
                     {% endfor%}
@@ -147,6 +201,99 @@
 </div>
 
 <!-- Modal -->
+
+<!-- addTemplateModal -->
+<form method="post" action="{% url 'doo:template_add' %}">
+  {% csrf_token %}
+  <div class="modal fade" id="addTemplateModal" tabindex="-1" aria-labelledby="addTemplateModal" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="addFileTitle">Add Template</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <input type="hidden" id="idRepository" name="repository" value="{{playbookRepository.repository.id }}">
+            {{ formService.as_p }} 
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary"> Create </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<!-- addTaskTemplateModal -->
+<form method="post" id="formAddTaskTemplate">
+  {% csrf_token %}
+<div class="modal fade" id="addTaskTemplateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" >Add Template</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+          <div class="mb-3">
+              <div class="card m-2">
+                <div class="card-header">
+                  Tasks
+                </div>
+                <div class="card-body">
+                  <input type="hidden" id="idTemplateAddTask" name="idTemplate">
+                  <label class="form-label">Name</label>
+                  <input id="taskName" type="text" name="name" class="form-control">
+                  <label class="form-label">Action</label>
+                  <select id="actionTaskPlaybook" name="actionSelect" class="form-select" aria-label="Select Action" onchange="changeActionTemplate(this,'varsTemplatePlaybookDiv')">
+                    <option value="0">Select Module</option>
+                    {% for module in ansibleModules %}
+                      <option value="{{module.id}}">{{module.name}}</option>
+                    {% endfor%}
+                  </select>
+
+                  <div class="card m-2">
+                    <div class="card-header">Options</div>
+                    <div class="card-body">
+                      <div id="varsTemplatePlaybookDiv">
+                                      
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+                  <div class="bg-light m-2 p-2">
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                      <button class="btn btn-primary btn-sm" type="button" onclick="salvarTaskTemplate()"><span class="bi-plus"></span> Add Task</button>
+                    </div>
+                  </div>
+
+
+            <div class="card m-2">
+              <div class="card-header">
+                Tasks
+              </div>
+              <div class="card-body">
+                <div id="tasksTemplateDiv" class="list-group">
+                  
+                </div>
+              </div>
+            </div>
+
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+</form>
+
 
 <!-- addHandlerModal -->
 <form id="formAddHandlerModal">
@@ -216,7 +363,7 @@
               <label class="form-label">Name</label>
               <input id="taskName" type="text" name="name" class="form-control">
               <label class="form-label">Action</label>
-              <select id="actionTaskPlaybook" name="actionSelect" class="form-select" aria-label="Select Action" onchange="changeAction(this,'varsTaskPlaybookDiv')">
+              <select id="actionTaskPlaybook" name="actionSelect" class="form-select" aria-label="Select Action" onchange="changeAction(this,'varsTaskPlaybookDiv','Task')">
                 <option value="0">Select Module</option>
                 {% for module in ansibleModules %}
                   <option value="{{module.id}}">{{module.name}}</option>
@@ -275,7 +422,6 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary"> Create </button>
       </div>
     </div>
   </div>
@@ -577,6 +723,52 @@
 <script>
   $('#playbookGroupDiv').hide();
 
+  function refreshTasksTemplate(data){
+    id = $('#idTemplateAddTask').val();
+    content = ''
+      data.forEach(function(t){
+        content += '<a href="#" class="list-group-item list-group-item-action" aria-current="true">'+
+                    '<div class="container">'+
+                      '<div class="row">'+
+                        '<div class="col-10">'+
+                          '<div class="d-flex w-100 justify-content-between">'+
+                            '<h5 class="mb-1">-name: '+t.name+'</h5>'+
+                          '</div>'+
+                          '<p class="mb-1"><p>'+t.action+':</p>';
+                          Object.keys(t[t.action]).forEach(function(key){
+                            content += key+': '+t[t.action][key]+'<br>\n';
+                          });
+                            content += ' </p>';
+             content += '</div>'+
+                        '<div class="col-2 align-self-center">'+
+                          '<button class="btn btn-outline-secondary right" type="button" onclick="removerTaskTemplate(\''+id+'\',\''+t.name+'\')"> <span class="bi-trash"></span> </button>'+
+                        '</div>'+
+                     '</div> '+
+                    '</div>'+
+                   '</a>';
+      });
+      $("#tasksTemplateDiv").html(content);
+  }
+
+  function loadTasksTemplate(id){
+    var base_url = window.location.origin;
+
+    $.get(base_url+'/repository/template/'+id+'/tasks',function(data){refreshTasksTemplate(data)})
+  }
+
+  function removerTaskTemplate(id, task){
+    var base_url = window.location.origin;
+
+    $.ajax({
+      url: base_url+'/repository/template/'+id+'/task/del',
+      headers: {'X-CSRFToken': '{{ csrf_token }}'},
+      type: 'DELETE',
+      data: {'task': task},
+      dataType: "json",
+      success: function(data){refreshTasksTemplate(data)}
+    });
+  }
+
   function removerTask(playbook, filename, name){
     var base_url = window.location.origin;
     var id = $('#idRepository').val();
@@ -722,8 +914,17 @@
     });
   }
 
-  function showOption(){
-    opt = $('#selectOptionHidden').val();
+  function salvarTaskTemplate(){
+    var base_url = window.location.origin;
+
+    id = $('#idTemplateAddTask').val();
+    var form = $('#formAddTaskTemplate').serialize();
+
+    $.post(base_url+'/repository/template/'+id+'/task/add', form, function(data){refreshTasksTemplate(data)})
+  }
+
+  function showOption(modal){
+    opt = $('#selectOptionHidden'+modal).val();
     $('#option'+opt).removeAttr('hidden');
   }
 
@@ -773,12 +974,25 @@
     }
   }
 
-  function changeAction(select,div){
+  function changeAction(select,div,modal){
     var id = select.value
     var base_url = window.location.origin;
 
     if(id != 0){
-      $.get( base_url+'/iac/ansibleModuleVariable/'+id, function( data ) {
+      $.get( base_url+'/iac/ansibleModuleVariable/'+id+'?modal='+modal, function( data ) {
+        $("#"+div).html( data );
+      });
+    }else{
+      $("#"+div).html(' ');
+    }
+  }
+
+  function changeActionTemplate(select,div){
+    var id = select.value
+    var base_url = window.location.origin;
+
+    if(id != 0){
+      $.get( base_url+'/iac/ansibleModuleVariableTemplate/'+id, function( data ) {
         $("#"+div).html( data );
       });
     }else{
@@ -796,6 +1010,16 @@
       $('#playbookGroupDiv').show();
       $('#playbookHostDiv').hide();
     }
+  }
+
+  function addTaskTemplate(id){
+
+    $('#idTemplateAddTask').val(id);
+
+    loadTasksTemplate(id)
+
+    $('#addTaskTemplateModal').modal('show');
+
   }
 
   function addPlaybookHost(filename, plays){
@@ -840,6 +1064,10 @@
 
   function addFile(){
     $('#addPlaybookFileModal').modal('show');
+  }
+
+  function addTemplate(){
+    $('#addTemplateModal').modal('show');
   }
 
   function removeId(id){
