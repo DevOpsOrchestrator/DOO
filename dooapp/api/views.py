@@ -2,7 +2,7 @@ from rest_framework.routers import APIRootView
 from rest_framework.viewsets import ModelViewSet
 from users.querysets import RestrictedQuerySet
 
-from ..models import  Ticket,Team, Group, Service, Template
+from ..models import  Ticket,Team, Group, Service, Template, FormItens
 from . import serializers
 
 class dooRootView(APIRootView):
@@ -52,3 +52,12 @@ class ServiceViewSet(ModelViewSet):
 class TemplateViewSet(ModelViewSet):
     queryset = RestrictedQuerySet(model=Template).all()
     serializer_class = serializers.TemplateSerializer
+    filterset_fields = ['service']
+
+#
+# FormItens
+#
+
+class FormItensViewSet(ModelViewSet):
+    queryset = RestrictedQuerySet(model=FormItens).all()
+    serializer_class = serializers.FormItensSerializer

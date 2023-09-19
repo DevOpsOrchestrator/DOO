@@ -22,6 +22,9 @@ router.register('service', views.ServiceViewSet)
 # Template
 router.register('template', views.TemplateViewSet)
 
+# FormItens
+router.register('formitens', views.FormItensViewSet)
+
 urlpatterns = [
     path('', include(router.urls)),
 ]

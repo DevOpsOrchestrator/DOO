@@ -3,32 +3,77 @@
 {% block content %}
 <form >
     <div class="row">
-        <div>
-            <div class="card-header">
-                <samp><span id="numero">numero: {{ ticket.numero }}</span></samp>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <p>Descrição: {{ ticket.descrição }}</p>
-                    <p>Data: {{ ticket.data_inicio }}</p>
-                    <p>Prioridade: {{ ticket.prioridade }}</p>
+        <div class="col-sm-6 mb-3 mb-sm-0">
+            <div class="card">
+                <div class="card-header">
+                    <samp><span id="numero">numero: {{ ticket.numero }}</span></samp>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <p>Descrição: {{ ticket.descricao }}</p>
+                        <p>Data: {{ ticket.data_inicio }}</p>
+                        <p>Prioridade: {{ ticket.prioridade }}</p>
+                    </div>
                 </div>
             </div>
-        </div>    
-    </div>
-    <div class="row">
-        <div class="form-group">
-            <label for="Templates">Templates: </label>
-            <select name="template" id="template" class="form-control" >
-                {% for template in templates %}
-                <option value="{{template.id}}" selcted="">{{template.titulo}}</option>
-                {% endfor %}
-            </select>
         </div>
-        <div class="form-group">
-            <button type="button" class="btn btn-primary">Primary</button>
-        </div>
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-header">
+                    <div class="input-group mb-3">
+                        <label class="input-group-text" for="services">Services</label>
+                        <select class="form-select" id="services" onclick="changeService(this)">
+                            <option value="0" selected="">Select Service</option>
+                            {% for service in services %}
+                            <option value="{{service.id}}" >{{service.nome}}</option>
+                            {% endfor %}
+                        </select>
+                        <label class="input-group-text" for="templates">Templates</label>
+                        <select class="form-select" id="templates">
+                        </select>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="formProvision">
 
+                    </div>
+                </div>
+            </div>
+            
+        </div>
     </div>
 </form>
+<script>
+    function changeService(select){
+        var id = select.value
+        var base_url = window.location.origin;
+    
+        if(id != 0){
+          $.get( base_url+'/api/doo/template/?service='+id, function( data ) {
+            $("#templates").append('<option value="0">Select Template</option>');
+            data.forEach(function(template){
+                $("#templates").append("<option value="+template.id+">"+template.name+"</option>");
+            })
+          });
+        }else{
+          $("#templates").html(' ');
+        }
+    }
+
+    function changeTemplate(select){
+        var id = select.value
+        var base_url = window.location.origin;
+    
+        if(id != 0){
+          $.get( base_url+'/api/doo/template/?service='+id, function( data ) {
+            $("#templates").append('<option value="0">Select Template</option>');
+            data.forEach(function(template){
+                $("#templates").append("<option value="+template.id+">"+template.name+"</option>");
+            })
+          });
+        }else{
+          $("#templates").html(' ');
+        }
+      }
+</script
 {% endblock %}

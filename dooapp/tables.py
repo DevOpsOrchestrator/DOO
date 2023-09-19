@@ -69,14 +69,9 @@ class ServiceTable(tables.Table):
         
 class TemplateTable(tables.Table):
 
-    # numero = tables.LinkColumn(
-    #     viewname='doo:template_detail',
-    #     args=[Accessor('id')]
-    # )
-
     controls = TemplateColumn(verbose_name=' ', template_name='dooapp/template_controls.html')
 
     class Meta:
         model = Template
         template_name = "django_tables2/bootstrap4.html"
-        fields = ('titulo', 'código')
+        fields = ('name', 'service')
