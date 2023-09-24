@@ -38,6 +38,8 @@ urlpatterns = [
     # Service urls
     path('service/', views.ServiceListView.as_view(), name='service'),                   # All services
     path('service/<pk>', views.ServiceDetailView.as_view(), name='service_detail'),      # Selected service
+    path('service/<pk>/templates', views.ServiceTemplateListView.as_view(), 
+                                          name='service_templates_detail'),              # Templates in Service
     path('service/add/', views.ServiceCreateView.as_view(), name='service_add'),         # Add new service
     path('service/edit/<pk>', views.ServiceUpdateView.as_view(), name='service_edit'),   # Edit selected service
     path('service/del/<pk>', views.ServiceDeleteView.as_view(), name='service_del'),     # Delete selected service
@@ -50,7 +52,7 @@ urlpatterns = [
     path('template/del/<pk>', views.TemplateDeleteView.as_view(), name='template_del'),     # Delete selected template
 
     # Provision urls
-    path('provision/<int:idTicket>', views.ProvisionStart.as_view(), name='provision_start'), 
+    path('provision/<int:idTicket>', views.ProvisionStart.as_view(), name='provision_detail'),
     
     # Report urls
     path('report/', views.TeamReportView.as_view(), name='report'),

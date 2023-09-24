@@ -1,8 +1,19 @@
+import os
+import yaml
 from email.policy import default
 from re import template
 from django.db import models
 
 from django.contrib.auth.models import User
+
+from repository.models import Repository
+
+from ansible.parsing.dataloader import DataLoader
+from ansible.playbook import Playbook
+from repository.dumper import AnsibleDumperRepository
+from repository.constants import ATTRIBUTES_PLAYBOOK
+from ansible.plugins.loader import init_plugin_loader
+
 
 PRIORIDADE_EMERGENCIAL = 1
 PRIORIDADE_URGENTE = 2
@@ -26,11 +37,17 @@ STATUS_CHOICES = (
     (STATUS_INATIVO, "Inativo"),
 )
 
+TYPE_INPUT = (
+    (1, "Text"),
+)
+
 # Class to handle tickets
+
+
 class Ticket(models.Model):
 
     numero = models.IntegerField(
-        null = True,
+        null=True,
     )
 
     titulo = models.CharField(
@@ -39,7 +56,7 @@ class Ticket(models.Model):
     )
 
     descricao = models.TextField(
-        null = True,
+        null=True,
         max_length=255,
         verbose_name='Descrição',
     )
@@ -54,10 +71,12 @@ class Ticket(models.Model):
     )
 
     data_fim = models.DateTimeField(
-        null= True,
+        null=True,
     )
 
 #  Class to handle teams
+
+
 class Team(models.Model):
     # Uma equipe pode ter vários grupos
     nome = models.CharField(
@@ -70,6 +89,8 @@ class Team(models.Model):
         return self.nome
 
 #  Class to handle groups
+
+
 class Group(models.Model):
     # Um grupo pode ter vários serviços e estar em apenas uma equipe
     nome = models.CharField(
@@ -87,7 +108,9 @@ class Group(models.Model):
     def __str__(self):
         return self.nome
 
-# Class to handle services    
+# Class to handle services
+
+
 class Service(models.Model):
     # Um serviço pode ter vários templates e estar em um único grupo
     nome = models.CharField(
@@ -100,7 +123,7 @@ class Service(models.Model):
         choices=STATUS_CHOICES,
         default=STATUS_ATIVO,
     )
-    
+
     grupo = models.ForeignKey(
         Group,
         on_delete=models.CASCADE,
@@ -110,41 +133,112 @@ class Service(models.Model):
     def __str__(self):
         return self.nome
 
-    
 # Class to handle templates
+
+
 class Template(models.Model):
     # Um template pode ser usado por vários serviços
-    titulo = models.CharField(
+    def __init__(self, *args, **kwargs):
+        self.playbook = None
+        super().__init__(*args, **kwargs)
+
+    name = models.CharField(
         max_length=100,
-        verbose_name='Título',
+        verbose_name='Name',
     )
-    
-    codigo = models.TextField(
-        verbose_name='Código',
-    )
-    
-    service = models.ManyToManyField(
+
+    service = models.ForeignKey(
         Service,
-        related_name='templates',
+        on_delete=models.CASCADE
     )
+
+    filename = models.CharField(
+        null=True,
+    )
+
+    repository = models.ForeignKey(
+        Repository, on_delete=models.CASCADE, related_name='templates', null=True)
 
     def __str__(self):
-        return self.titulo
+        return self.name
+
+    def retirar_nulos(self, data, listAtrribute=None):
+        if listAtrribute:
+            return {k: v for k, v in data.items() if v and k in listAtrribute}
+        return {k: v for k, v in data.items() if v}
+    
+    def get_path_playbook(self):
+        return f'{self.repository.folderRepository()}/templates/{self.filename}.yml'
+
+    def get_playbook(self):
+        loader = DataLoader()
+
+        init_plugin_loader([])
+
+        playbook_path = self.get_path_playbook()
+
+        if os.path.exists(playbook_path):
+            self.playbook = Playbook.load(playbook_path, loader=loader)
+
+        return self.playbook
+
+    def salvarPlaybook(self):
+
+        dataPlaybook = []
+        for p in self.playbook._entries:
+            validos = self.retirar_nulos(p.serialize(), ATTRIBUTES_PLAYBOOK)
+
+            data = {'name': validos.pop('name')}
+            data.update(validos)
+
+            dataPlaybook.append(data)
+
+        self.salvarYaml(dataPlaybook, filename=self.filename+'.yml')
+
+    def salvarYaml(self, data, folder=None, filename=None):
+        if not filename:
+            filename = 'main.yml'
+        if not folder:
+            folder = self.repository.folderRepository()
+
+        with open(folder+'/templates/'+filename, 'w') as file:
+            documents = yaml.dump(data, file, Dumper=AnsibleDumperRepository, explicit_start=True, explicit_end=True,
+                                  sort_keys=False, default_flow_style=False, default_style='', allow_unicode=True)
+
+
+class FormItens(models.Model):
+
+    input_type = models.IntegerField(
+        choices=TYPE_INPUT,
+        default=1,
+    )
+
+    label = models.CharField(
+        max_length=100,
+        verbose_name='label',
+    )
+
+    template = models.ForeignKey(
+        Template, on_delete=models.CASCADE, related_name='formitens')
 
 # Class to handle provision
-class provision(models.Model):
 
-    ticket = models.OneToOneField(
+
+class Provision(models.Model):
+
+    ticket = models.ForeignKey(
         Ticket,
         on_delete=models.CASCADE,
         related_name='provision_ticket',
     )
 
-    template = models.OneToOneField(
-        Ticket,
+    template = models.ForeignKey(
+        Template,
         on_delete=models.CASCADE,
         related_name='provision_template',
     )
+    
+    prompt = models.TextField(null=True)
 
     user = models.ForeignKey(
         User,
@@ -155,7 +249,6 @@ class provision(models.Model):
     date = models.DateTimeField(
         auto_now_add=True,
     )
-
-
-
     
+    def __str__(self):
+        return f"{self.template.name} ({self.date.strftime('%d/%m/%Y %H:%M:%S')})"

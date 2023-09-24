@@ -1,4 +1,7 @@
+from typing import Any
+from django.http import HttpRequest, HttpResponse
 from django.views.generic import View
+from django.views.generic.edit import FormView
 from django.shortcuts import  render, redirect
 from django.urls import reverse
 from rest_framework.response import Response
@@ -13,6 +16,7 @@ from .models import (
     Group,
     Service,
     Template,
+    Provision
 )
 from .tables import (
     TicketTable,
@@ -23,6 +27,14 @@ from .tables import (
 )
 
 from .report import team_report, ReportSerializer
+
+from .forms import TemplateForm
+
+from django.contrib.auth.mixins import PermissionRequiredMixin
+
+from django.http import Http404
+
+
 
 class HomeView(View):
     template_name = 'base/home.html'
@@ -142,6 +154,40 @@ SERVICE_URL = '/doo/service'
 class ServiceDetailView (DetailView):
     model = Service
 
+class ServiceTemplateListView(TableView):
+    permission_required = 'doo.view_template'
+    model = Template
+    table_class = TemplateTable
+    template_name = 'dooapp/template_list.html'
+    
+    def get(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        
+        pk = self.kwargs.get('pk')
+        
+        self.object_list = queryset.filter(service=pk).order_by('name')
+        allow_empty = self.get_allow_empty()
+
+        if not allow_empty:
+            # When pagination is enabled and object_list is a queryset,
+            # it's better to do a cheap query than to load the unpaginated
+            # queryset in memory.
+            if self.get_paginate_by(self.object_list) is not None and hasattr(
+                self.object_list, "exists"
+            ):
+                is_empty = not self.object_list.exists()
+            else:
+                is_empty = not self.object_list
+            if is_empty:
+                raise Http404(
+                    _("Empty list and “%(class_name)s.allow_empty” is False.")
+                    % {
+                        "class_name": self.__class__.__name__,
+                    }
+                )
+        context = self.get_context_data()
+        return self.render_to_response(context)
+
 class ServiceListView(TableView):
     permission_required = 'dooapp.view_service'
     model = Service
@@ -185,11 +231,15 @@ class TemplateListView(TableView):
     template_name = 'dooapp/template_list.html'
 
 class TemplateCreateView(CreateView):
-    permission_required = 'dooapp.add_template'
     model = Template
-    fields = ["titulo", "codigo"]
+    form_class = TemplateForm
+    permission_required = 'dooapp.add_template'
     template_name = "dooapp/template_form.html"
     success_url = TEMPLATE_URL
+    
+    def get_success_url(self) -> str:
+        return super().get_success_url()
+    
 
 class TemplateUpdateView(UpdateView):
     permission_required = 'doo.change_template'
@@ -210,17 +260,20 @@ class TemplateDeleteView(DeleteView):
 
 class ProvisionStart(View):
     template_name = 'dooapp/provision.html'
-
+    
     def get(self, request, idTicket):
         user = request.user
 
         ticket = Ticket.objects.get(id=idTicket)
 
-        templates = Template.objects.all()
+        services = Service.objects.order_by("nome").all()
+        
+        provisions = Provision.objects.filter(ticket=ticket).order_by('-date').all()
 
         return render(request, self.template_name, {
             'ticket': ticket,
-            'templates': templates
+            'services': services,
+            'provisions': provisions
         })
 
 # View of report generation

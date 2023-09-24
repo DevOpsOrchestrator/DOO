@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from ..models import Ticket,Team,Group,Service,Template
+from ..models import Ticket,Team,Group,Service,Template,FormItens,Provision
 
 
 class TicketSerializer(serializers.ModelSerializer):
@@ -27,10 +27,24 @@ class ServiceSerializer(serializers.ModelSerializer):
         model = Service
         fields = '__all__'
 
+class ProvisionSerializer(serializers.ModelSerializer):
+    
+    template_name  = serializers.CharField(source='template.name', read_only=True)
+
+    class Meta:
+        model = Provision
+        fields = '__all__'
+        
 class TemplateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Template
+        fields = '__all__'
+
+class FormItensSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = FormItens
         fields = '__all__'
 
 

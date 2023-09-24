@@ -59,7 +59,7 @@
                                         <a class="btn btn-sm btn-danger" href="{% url 'doo:service_del' service.id %}">Deletar</a>
                                     {% endif %}
                                     {% if perms.dooapp.view_template %}
-                                        <a class="btn btn-sm btn-success" href="{% url 'doo:template'%}">listar Templates</a>
+                                        <a class="btn btn-sm btn-success" href="{% url 'doo:service_templates_detail' service.id %}">listar Templates</a>
                                     {% endif %}
                                 </div>                                
                             </div>
