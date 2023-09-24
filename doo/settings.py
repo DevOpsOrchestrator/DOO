@@ -98,6 +98,7 @@ STATIC_ROOT = BASE_DIR + '/static'
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'project-static', 'css'),
     os.path.join(BASE_DIR, 'project-static', 'img'),
 	os.path.join(BASE_DIR, 'project-static', 'js'),
 ]

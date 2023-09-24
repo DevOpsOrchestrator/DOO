@@ -1,8 +1,7 @@
 {% extends "base/base.html" %}
 
 {% block content %}
-<form >
-    <div class="row">
+    <div class="row mb-4">
         <div class="col-sm-6 mb-3 mb-sm-0">
             <div class="card">
                 <div class="card-header">
@@ -22,30 +21,101 @@
                 <div class="card-header">
                     <div class="input-group mb-3">
                         <label class="input-group-text" for="services">Services</label>
-                        <select class="form-select" id="services" onclick="changeService(this)">
+                        <select class="form-select" id="services" onchange="changeService(this)">
                             <option value="0" selected="">Select Service</option>
                             {% for service in services %}
                             <option value="{{service.id}}" >{{service.nome}}</option>
                             {% endfor %}
                         </select>
                         <label class="input-group-text" for="templates">Templates</label>
-                        <select class="form-select" id="templates">
+                        <select class="form-select" id="templates" onchange="changeTemplate(this)">
                         </select>
                     </div>
                 </div>
                 <div class="card-body">
-                    <div id="formProvision">
+                    <form method="post" id="formProvision">
+                        {% csrf_token %}
+                        <input type="hidden" id="ticket" name="ticket" value="{{ticket.pk}}">
+                        <div id="divProvision" class="input-group mb-3">
 
-                    </div>
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="provision()"> Provision </button>
+                    </form>
                 </div>
             </div>
             
         </div>
     </div>
-</form>
+    <div class="row mt-4">
+        <div class="col-4">
+            <div class="card">
+                <div class="card-header">
+                    <samp><span >History</span></samp>
+                </div>
+                <div class="card-body">
+                    <div class="list-group overflow-auto" id="menuProvisions">
+                        {% for provision in provisions %}
+                            <button type="button" name="menuHistory" class="list-group-item list-group-item-action" onclick="showHistory(this,'{{provision.pk}}')">{{provision}}</button>
+                        {% endfor %}
+                      </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-8">
+            <div class="card">
+                <div class="card-header">
+                    <samp><span >Provision</span></samp>
+                </div>
+                <div class="card-body" style="height: 100%">
+                    <div class="terminal" style="display: none;" id="terminal">
+                        <div class="terminal-header">
+                            <span class="red"></span>
+                            <span class="yellow"></span>
+                            <span class="green"></span>
+                        </div>
+                        <div class="terminal-body" id="divTerminalReturn">
+
+                        </div>
+                        <div class="terminal-input">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 <script>
+
+    function zeroEsquerda(numero) {
+        return numero < 10 ? '0' + numero : numero;
+    }
+
+    function updateMenuHistory(id){
+        var base_url = window.location.origin;
+        
+        $.get(`${base_url}/api/doo/provision/?ticket=${id}`,function(data){
+            $("#menuProvisions").html('')
+            data.forEach(function(provision){
+                var data = new Date(provision.date);
+                var stringData = `${zeroEsquerda(data.getDate())}/${zeroEsquerda(data.getMonth() + 1)}/${data.getFullYear()} ${zeroEsquerda(data.getHours())}:${zeroEsquerda(data.getMinutes())}:${zeroEsquerda(data.getSeconds())}`
+                $("#menuProvisions").append(`<button type="button" name="menuHistory" class="list-group-item list-group-item-action" onclick="showHistory(this,'${provision.id}')">${provision.template_name} (${stringData})</button>`);
+            })
+        })
+    }
+
+    function showHistory(bt,id){
+        var base_url = window.location.origin;
+
+        $("[name='menuHistory']").removeClass("active");
+        $(bt).addClass("active");
+        $.get(`${base_url}/api/doo/provision/${id}`,function(data){
+            $("#divTerminalReturn").html('')
+            $('#terminal').show()
+            $("#divTerminalReturn").append(data.prompt);
+        })
+    }
+
     function changeService(select){
-        var id = select.value
+        var id = select.value;
         var base_url = window.location.origin;
     
         if(id != 0){
@@ -65,15 +135,36 @@
         var base_url = window.location.origin;
     
         if(id != 0){
-          $.get( base_url+'/api/doo/template/?service='+id, function( data ) {
-            $("#templates").append('<option value="0">Select Template</option>');
-            data.forEach(function(template){
-                $("#templates").append("<option value="+template.id+">"+template.name+"</option>");
+          $.get( base_url+'/api/doo/formitens/?template='+id, function( data ) {
+            $("#divProvision").html('');
+            data.forEach(function(formitem){
+                if (formitem.input_type == 1){
+                    //$('#formProvision').attr('action', `${base_url}/api/doo/provision/template/${id}`);
+                    $("#divProvision").append(`<label class="input-group-text" for="${formitem.label}"> ${formitem.label} </label>`);
+                    $("#divProvision").append(`<input type="text" class="form-control" id="${formitem.label}" name="param__${formitem.label}" required>`);
+                }
             })
           });
         }else{
-          $("#templates").html(' ');
+          $("#divProvision").html(' ');
         }
       }
-</script
+
+      function provision(){
+        id = $("#templates").val();
+        var form = $('#formProvision').serialize();
+        var base_url = window.location.origin;
+
+        $.post(`${base_url}/api/doo/provision/template/${id}`, form, function( data ) {
+            $('#terminal').show();
+            $("#divTerminalReturn").html('');
+            
+            data.prompt.forEach(function(line){
+                $("#divTerminalReturn").append(line);  
+            });
+
+            updateMenuHistory(data.ticket)
+        });
+      }
+</script>
 {% endblock %}

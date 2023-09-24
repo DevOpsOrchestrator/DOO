@@ -19,7 +19,7 @@ from iac.views import getHtmlInventoryParameter
 from .tables import RepositoryTable
 from .models import (Repository)
 from .helper import handle_uploaded_file
-from dooapp.models import Service,Template
+from dooapp.models import Service,Template, FormItens
 from dooapp.forms import TemplateForm
 
 from ansible.playbook import Playbook
@@ -83,25 +83,26 @@ def get_params(params_dict):
                 params[params_key] = params_dict[line]
     return params
 
+def get_input_types(params_dict):
+    """Function Get Parameters"""
+    params = {}
+    for line in params_dict:
+        if line.startswith('inputType__'):
+            params_key = line.replace('inputType__', '')
+            if params_dict[line]:
+                params[params_key] = params_dict[line]
+    return params
+
 def get_playbook(template):
     
-    loader = DataLoader()
-    inventory = InventoryManager(loader=loader)
-    variable_manager = VariableManager(loader=loader, inventory=inventory)
-    
-    playbook = None
-    
-    if template.yaml:
+    playbook = template.get_playbook()
         
-        # Carregue a string YAML usando o DataLoader
-        playbook_yaml = loader.load(template.yaml)
-
-        # Crie um objeto Play com base no conteúdo YAML
-        playbook = Play().load(playbook_yaml[0])
-        
-    else:
-        playbook = Play()
-        setattr(playbook, 'name', template.name)
+    if not playbook:
+        loader = DataLoader()
+        playbook = Playbook(loader=loader)
+        play = Play()
+        setattr(play, 'name', template.name)
+        playbook._entries.append(play)
         
     return playbook
 
@@ -132,9 +133,10 @@ def get_tasks_playbook(playbook):
 
     json_task = []
 
-    for bk in playbook.tasks:
-        for task in bk.block:
-            json_task.append({'name': task.name, 'action': task.action, task.action: task.args})
+    for play in playbook.get_plays():
+        for bk in play.tasks:
+            for task in bk.block:
+                json_task.append({'name': task.name, 'action': task.action, task.action: task.args})
     
     return json_task
 
@@ -297,19 +299,19 @@ class TaskTemplateDeleteView(DeleteView):
         params = QueryDict(request.body)
         deleteTask = params.get('task')
         
-        blocks = getattr(playbook, 'tasks')
-        remover = None
-        for block in blocks:
-            for task in block.get_tasks():
-                if deleteTask in task.name:
-                    remover = block
-                    blocks.remove(remover)
+        for play in playbook.get_plays():
+            blocks = getattr(play, 'tasks')
+            remover = None
+            for block in blocks:
+                for task in block.get_tasks():
+                    if deleteTask in task.name:
+                        remover = block
+                        blocks.remove(remover)
                     
-        setattr(playbook, 'tasks', blocks)
+        setattr(playbook._entries[0], 'tasks', blocks)
         
-        yamlString = get_string_playbook(playbook) 
-        
-        template.yaml = yamlString
+        template.playbook = playbook
+        template.salvarPlaybook()
         
         template.save() 
         
@@ -331,9 +333,15 @@ class AddTaskTemplateView(CreateView):
         id_module = request.POST['actionSelect']
 
         ansible_module = AnsibleModule.objects.get(id=id_module)
+        
+        input_types = get_input_types(request.POST.dict())
 
         params_data = get_params(request.POST.dict())
-
+        
+        form_itens = []
+        for param,label in params_data.items():
+            form_itens.append({'input_type':input_types[param],'label':label})
+            
         tasks = []
         
         for k,v in params_data.items():
@@ -345,19 +353,47 @@ class AddTaskTemplateView(CreateView):
         setattr(task, 'action', ansible_module.name)
         setattr(task, 'args', params_data)
         setattr(block,'block',[task])
-        tasks = getattr(playbook, 'tasks')
+        tasks = getattr(playbook._entries[0], 'tasks')
         tasks.append(block)
-        setattr(playbook, 'tasks', tasks)
+        setattr(playbook._entries[0], 'tasks', tasks)
         
-        yamlString = get_string_playbook(playbook) 
-        
-        template.yaml = yamlString
+        template.playbook = playbook
+        template.salvarPlaybook()
         
         template.save()
+        
+        for form_item in form_itens:
+            FormItens.objects.create(template= template, input_type=form_item['input_type'], label=form_item['label'])
         
         json_tasks = get_tasks_playbook(playbook)
 
         return JsonResponse(json_tasks, safe=False)
+    
+class AddHostTaskTemplateView(CreateView):
+    """Class Task in Template View"""
+    model = Template
+    template_name = "repository/playbook_form.html"
+
+    def post(self, request, *args, **kwargs):
+        template = self.get_object()
+        
+        playbook = get_playbook(template)        
+
+        hosts = request.POST.getlist('hosts[]')
+        groups = request.POST.getlist('groups[]')
+
+        for play in playbook.get_plays():
+            if hosts:
+                setattr(play, 'hosts', ','.join(hosts))
+            else:
+                setattr(play, 'hosts', ','.join(groups))
+
+        template.playbook = playbook
+        template.salvarPlaybook()
+        
+        url = reverse('repository:playbook_detail', kwargs={'pk':template.pk})
+
+        return JsonResponse({'redirect': url}, safe=False)
 
 class AddTaskPlaybookView(CreateView):
     """Class Add Task in Playbook View"""

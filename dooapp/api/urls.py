@@ -22,9 +22,15 @@ router.register('service', views.ServiceViewSet)
 # Template
 router.register('template', views.TemplateViewSet)
 
+# Provision
+router.register('provision', views.ProvisionViewSet)
+
 # FormItens
 router.register('formitens', views.FormItensViewSet)
 
+
 urlpatterns = [
-    path('', include(router.urls)),
+    path('provision/template/<pk>',views.TemplateProvisionViewSet.as_view(),name='provision_template_add'),  
 ]
+
+urlpatterns += router.urls

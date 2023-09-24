@@ -1,5 +1,5 @@
 {% if perms.dooapp.add_provision %}
-<a class="btn btn-sm btn-primary" href="{% url 'doo:provision_start' record.id %}">Provisionar</a>
+<a class="btn btn-sm btn-primary" href="{% url 'doo:provision_detail' record.id %}">Provisionar</a>
 {% endif %}
 {% if perms.dooapp.change_ticket %}
 <a class="btn btn-sm btn-warning" href="{% url 'doo:ticket_edit' record.id %}">Editar</a>

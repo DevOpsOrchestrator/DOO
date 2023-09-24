@@ -20,10 +20,9 @@ from git import Repo
 from .dumper import AnsibleDumperRepository
 from .constants import ATTRIBUTES_TASK, ATTRIBUTES_PLAYBOOK
 
-from dooapp.models import Template
-
 from ansible.config.manager import ConfigManager,find_ini_config_file
 
+from ansible.plugins.loader import init_plugin_loader
 
 # Class to handle Repository
 class Repository(models.Model):
@@ -50,11 +49,6 @@ class Repository(models.Model):
     token_key = models.CharField(
         max_length=100,
         verbose_name='Token Key',
-    )
-    
-    templates = models.ManyToManyField(
-        Template,
-        related_name='templates',
     )
     
     def folderRepository(self):
@@ -103,6 +97,11 @@ class Repository(models.Model):
                 os.makedirs(self.folderRepository()+'/files')
                 with open(self.folderRepository()+'/files/.gitkeep', 'w') as creating_gitkeep: 
                     pass
+                
+            if not os.path.exists(self.folderRepository()+'/templates'):   
+                os.makedirs(self.folderRepository()+'/templates')
+                with open(self.folderRepository()+'/templates/.gitkeep', 'w') as creating_gitkeep: 
+                    pass
             
             #TODO: Tem que ter permissão 600 nessa pasta no gitrunner!
             if not os.path.exists(self.folderRepository()+'/files/keys'):   
@@ -137,6 +136,8 @@ class Repository(models.Model):
         loader.set_basedir(self.folderRepository())
   
         plays = []
+        
+        init_plugin_loader([])
 
         for playbookFile in os.listdir(self.folderRepository()): 
             if (playbookFile.endswith(".yml") or playbookFile.endswith(".yaml")) and 'gitlab-ci' not in playbookFile  :

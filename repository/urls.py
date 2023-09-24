@@ -1,5 +1,4 @@
 from django.urls import path
-
 from . import views
 
 app_name = 'repository'
@@ -32,8 +31,9 @@ urlpatterns = [
     path('playbook/play/handlers/<pk>',views.HandlerDetailView.as_view(), name='playbook_handler_detail'),
     
     # Template urls
-    path('template/<pk>/tasks',views.TaskTemplateDetailView.as_view(), name='task_template_add'),
+    path('template/<pk>/tasks',views.TaskTemplateDetailView.as_view(), name='task_template_detail'),
     path('template/<pk>/task/add',views.AddTaskTemplateView.as_view(), name='task_template_add'),
-    path('template/<pk>/task/del',views.TaskTemplateDeleteView.as_view(), name='playbook_task_del'),
+    path('template/<pk>/task/del',views.TaskTemplateDeleteView.as_view(), name='task_template_del'),
+    path('template/<pk>/task/host/add',views.AddHostTaskTemplateView.as_view(), name='host_task_template_add'),
 ]   
 

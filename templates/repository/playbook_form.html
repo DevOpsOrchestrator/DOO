@@ -136,10 +136,6 @@
                                 <span class="bi-window-plus"></span>
                                 add Task
                               </button>
-                              <button type="button" class="btn btn-success btn-sm" onclick="addPlaybookTemplate('{{playbookFile|get_item:"_file_name"|basename}}' , '{{playbookFile.get_plays|list_to_string_by_attr:"name,|"}}')">
-                                <span class="bi-window-plus"></span>
-                                add Template
-                              </button>
                             </td>
                         </tr>
                     {% endfor%}
@@ -178,17 +174,13 @@
                               {{template.service.nome}}
                             </td>
                             <td>
-                              <button type="button" class="btn btn-success btn-sm">
-                                <span class="bi-journal-arrow-up"></span>
-                                Edit Template
-                              </button>
-                              <button type="button" class="btn btn-success btn-sm" >
+                              <button type="button" class="btn btn-success btn-sm" onclick="addTemplateHost('{{template.id}}')">
                                 <span class="bi-window-plus"></span>
                                 add Hosts
                               </button>
                               <button type="button" class="btn btn-success btn-sm" onclick="addTaskTemplate('{{template.id}}')">
                                 <span class="bi-window-plus"></span>
-                                add Template
+                                add Tasks
                               </button>
                             </td>
                         </tr>
@@ -201,6 +193,57 @@
 </div>
 
 <!-- Modal -->
+
+<!-- addHostTemplateModal -->
+<form method="post" id="formHostTemplate">
+  {% csrf_token %}
+<div class="modal fade" id="addHostTemplateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" >Add Hosts</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+          <div class="mb-3">
+            <input type="hidden" id="idTemplateHost" name="template" >
+
+            <label class="form-label">Add Hosts:</label>
+            <div class="input-group mb-3">
+              <span class="input-group-text">Select type</span>
+              <select id="typeHost" class="form-select" onchange="changeTypeHostTemplate(this)">
+                <option value="host">Host</option>
+                <option value="group">Group</option>
+              </select>
+            </div>
+
+            <div class="input-group mb-3" id="templateHostDiv">
+              <span class="input-group-text">Hosts</span>
+              <select name="hosts[]" class="form-select" multiple aria-label="Select hosts">
+                {% for name, host in playbookRepository.inventoryRepository.inventory.hosts.items %}
+                  <option value="{{host}}">{{name}}</option> 
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="input-group mb-3" id="templateGroupDiv" style="display: none;">
+              <span class="input-group-text">Groups</span>
+              <select name="groups[]" class="form-select" multiple aria-label="Select groups">
+                {% for name, group in playbookRepository.inventoryRepository.inventory.groups.items %}
+                    <option value="{{group}}">{{name}}</option> 
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="addHostInTemplate()"> Add </button>
+      </div>
+    </div>
+  </div>
+</div>
+</form>
 
 <!-- addTemplateModal -->
 <form method="post" action="{% url 'doo:template_add' %}">
@@ -509,7 +552,7 @@
               </select>
               <input type="hidden" id="filenamePlaybook" name="filename">
             </div>
-            <div class="input-group mb-3" id="playbookGroupDiv">
+            <div class="input-group mb-3" id="playbookGroupDiv" style="display: none;">
               <span class="input-group-text">Groups</span>
               <select name="groups[]" class="form-select" multiple aria-label="Select groups">
                 {% for name, group in playbookRepository.inventoryRepository.inventory.groups.items %}
@@ -721,7 +764,6 @@
 </form>
 
 <script>
-  $('#playbookGroupDiv').hide();
 
   function refreshTasksTemplate(data){
     id = $('#idTemplateAddTask').val();
@@ -1012,6 +1054,18 @@
     }
   }
 
+  function changeTypeHostTemplate(select){
+    var option = select.value
+
+    if(option == 'host'){
+      $('#templateGroupDiv').hide();
+      $('#templateHostDiv').show();
+    }else{
+      $('#templateGroupDiv').show();
+      $('#templateHostDiv').hide();
+    }
+  }
+
   function addTaskTemplate(id){
 
     $('#idTemplateAddTask').val(id);
@@ -1033,6 +1087,23 @@
     }) 
     
     $('#addplaybookHostsModal').modal('show');
+  }
+
+  function addHostInTemplate(){
+    var base_url = window.location.origin;
+    var id = $('#idTemplateHost').val();
+
+    var form = $('#formHostTemplate').serialize();
+
+    $.post(`${base_url}/repository/template/${id}/task/host/add`, form, function(data){window.location.href = base_url+data.redirect;})
+
+  }
+
+  function addTemplateHost(id){
+
+    $('#idTemplateHost').val(id);
+    
+    $('#addHostTemplateModal').modal('show');
   }
 
   function addPlaybookTask(filename, plays){

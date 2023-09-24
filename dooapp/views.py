@@ -16,6 +16,7 @@ from .models import (
     Group,
     Service,
     Template,
+    Provision
 )
 from .tables import (
     TicketTable,
@@ -259,17 +260,20 @@ class TemplateDeleteView(DeleteView):
 
 class ProvisionStart(View):
     template_name = 'dooapp/provision.html'
-
+    
     def get(self, request, idTicket):
         user = request.user
 
         ticket = Ticket.objects.get(id=idTicket)
 
-        services = Service.objects.all()
+        services = Service.objects.order_by("nome").all()
+        
+        provisions = Provision.objects.filter(ticket=ticket).order_by('-date').all()
 
         return render(request, self.template_name, {
             'ticket': ticket,
-            'services': services
+            'services': services,
+            'provisions': provisions
         })
 
 # View of report generation

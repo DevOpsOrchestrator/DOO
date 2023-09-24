@@ -18,4 +18,4 @@ class TemplateForm(forms.ModelForm):
       
     class Meta:
        model = Template
-       fields = ['name','service'] 
+       fields = ['name','filename','service'] 
