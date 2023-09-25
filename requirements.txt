@@ -42,3 +42,6 @@ ansible==8.4.0
 
 #Debug
 debugpy==1.8.0
+
+#immutabledict
+immutabledict==3.0.0

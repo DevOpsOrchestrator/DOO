@@ -6,4 +6,5 @@ deploy-job:
   script:
     - find files/keys -type f -exec chmod 600 {} +
     - chmod a+x vault.py
+    - chmod a+x script.sh
     - ./script.sh
