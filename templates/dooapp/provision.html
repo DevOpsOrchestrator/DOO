@@ -53,7 +53,7 @@
                     <samp><span >History</span></samp>
                 </div>
                 <div class="card-body">
-                    <div class="list-group overflow-auto" id="menuProvisions">
+                    <div class="list-group scrollable-div overflow-auto vh-100" id="menuProvisions">
                         {% for provision in provisions %}
                             <button type="button" name="menuHistory" class="list-group-item list-group-item-action" onclick="showHistory(this,'{{provision.pk}}')">{{provision}}</button>
                         {% endfor %}
@@ -67,7 +67,7 @@
                     <samp><span >Provision</span></samp>
                 </div>
                 <div class="card-body" style="height: 100%">
-                    <div class="terminal" style="display: none;" id="terminal">
+                    <div class="terminal scrollable-div overflow-auto vh-100" style="display: none;" id="terminal">
                         <div class="terminal-header">
                             <span class="red"></span>
                             <span class="yellow"></span>
@@ -84,6 +84,12 @@
         </div>
     </div>
 <script>
+
+    function ajustarAlturaTextarea(textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px';
+        textarea.value = textarea.value.trim();
+    }
 
     function zeroEsquerda(numero) {
         return numero < 10 ? '0' + numero : numero;
@@ -135,16 +141,15 @@
         var base_url = window.location.origin;
     
         if(id != 0){
-          $.get( base_url+'/api/doo/formitens/?template='+id, function( data ) {
+          $.get( base_url+'/api/doo/provision/template/'+id+'/itens', function( data ) {
             $("#divProvision").html('');
             data.forEach(function(formitem){
-                if (formitem.input_type == 1){
-                    //$('#formProvision').attr('action', `${base_url}/api/doo/provision/template/${id}`);
-                    $("#divProvision").append(`<label class="input-group-text" for="${formitem.label}"> ${formitem.label} </label>`);
-                    $("#divProvision").append(`<input type="text" class="form-control" id="${formitem.label}" name="param__${formitem.label}" required>`);
-                }
+                    $("#divProvision").append(`<div class="input-group mb-3">`);
+                    $("#divProvision").append(`<span class="input-group-text">${formitem}</span>`); 
+                    $("#divProvision").append(`<textarea rows="1" oninput="ajustarAlturaTextarea(this)" class="form-control" aria-label="${formitem}" id="${formitem}" name="param__${formitem}" required> </textarea>`);
+                    $("#divProvision").append(`</div>`);
+                })
             })
-          });
         }else{
           $("#divProvision").html(' ');
         }

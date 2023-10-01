@@ -104,12 +104,7 @@ def getHtmlAnsibleModuleVariableTemplate(AnsibleModuleVariables):
           html +=f'<span class="input-group-text {fontRequired}" >{ansibleModuleVariable.name}</span> '
 
           html+=f'''
-            <select class="form-select" id="inputTypeSelect" name="inputType__{ansibleModuleVariable.name}">
-                <option selected>Choose Input Type</option>
-                <option value="1">Text</option>
-            </select>
-            <span class="input-group-text" >Label</span>
-            <input type="text" class="form-control" name="param__{ansibleModuleVariable.name}" {required}>
+            <textarea class="form-control" aria-label="{ansibleModuleVariable.name}" name="param__{ansibleModuleVariable.name}" {required} rows=1 style="height:auto;"></textarea>
           '''
           
           html +='</div>'

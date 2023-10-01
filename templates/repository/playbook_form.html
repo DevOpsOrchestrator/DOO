@@ -39,11 +39,11 @@
                                   <span class="bi-window-plus"></span>
                                   Join Group
                                 </button>
-                                <button type="button" class="btn btn-success btn-sm" onclick="editHost('{{playbookRepository.repository.id}}','{{name}}')">
+                                <button type="button" class="btn btn-warning btn-sm" onclick="editHost('{{playbookRepository.repository.id}}','{{name}}')">
                                   <span class="bi-journal-arrow-up"></span>
                                   Edit Vars
                                 </button>
-                                <button type="button" class="btn btn-success btn-sm" onclick="delHost('{{playbookRepository.repository.id}}','{{name}}')">
+                                <button type="button" class="btn btn-danger btn-sm" onclick="delHost('{{playbookRepository.repository.id}}','{{name}}')">
                                   <span class="bi-trash"></span>
                                   Delete
                                 </button>
@@ -73,11 +73,11 @@
                                     <td>{{name}}</td>
                                     <td>{{group.hosts|list_to_string:" "}}</td>
                                     <td>
-                                      <button type="button" class="btn btn-success btn-sm" onclick="editGroup('{{playbookRepository.repository.id}}','{{name}}')">
+                                      <button type="button" class="btn btn-warning btn-sm" onclick="editGroup('{{playbookRepository.repository.id}}','{{name}}')">
                                         <span class="bi-journal-arrow-up"></span>
                                         Edit Vars
                                       </button>
-                                      <button type="button" class="btn btn-success btn-sm" onclick="delGroup('{{playbookRepository.repository.id}}','{{name}}')">
+                                      <button type="button" class="btn btn-danger btn-sm" onclick="delGroup('{{playbookRepository.repository.id}}','{{name}}')">
                                         <span class="bi-trash"></span>
                                         Delete
                                       </button>
@@ -120,10 +120,6 @@
                               {{playbookFile.get_plays|list_to_string_by_attr:"name, "}}
                             </td>
                             <td>
-                              <button type="button" class="btn btn-success btn-sm" onclick="editFile('{{playbookFile.name}}')">
-                                <span class="bi-journal-arrow-up"></span>
-                                Edit File
-                              </button>
                               <button type="button" class="btn btn-success btn-sm" onclick="addPlaybookHost('{{playbookFile|get_item:"_file_name"|basename}}' , '{{playbookFile.get_plays|list_to_string_by_attr:"name,|"}}')">
                                 <span class="bi-window-plus"></span>
                                 add Hosts
@@ -135,6 +131,10 @@
                               <button type="button" class="btn btn-success btn-sm" onclick="addPlaybookTask('{{playbookFile|get_item:"_file_name"|basename}}' , '{{playbookFile.get_plays|list_to_string_by_attr:"name,|"}}')">
                                 <span class="bi-window-plus"></span>
                                 add Task
+                              </button>
+                              <button type="button" class="btn btn-danger btn-sm" onclick="deleteFilePlaybook('{{playbookRepository.repository.id }}' , '{{playbookFile|get_item:"_file_name"|basename}}')">
+                                <span class="bi-trash"></span>
+                                Del File
                               </button>
                             </td>
                         </tr>
@@ -181,6 +181,10 @@
                               <button type="button" class="btn btn-success btn-sm" onclick="addTaskTemplate('{{template.id}}')">
                                 <span class="bi-window-plus"></span>
                                 add Tasks
+                              </button>
+                              <button type="button" class="btn btn-danger btn-sm" onclick="delTemplate('{{template.id}}')">
+                                <span class="bi-trash"></span>
+                                Del Template
                               </button>
                             </td>
                         </tr>
@@ -258,6 +262,7 @@
         <div class="modal-body">
           <div class="mb-3">
             <input type="hidden" id="idRepository" name="repository" value="{{playbookRepository.repository.id }}">
+            <input type="hidden" id="next" name="next" value="{% url 'repository:playbook_detail' playbookRepository.repository.id %}">
             {{ formService.as_p }} 
           </div>
         </div>
@@ -574,7 +579,7 @@
 
 
 <!-- addPlaybookFileModal -->
-<form method="post" action="{% url 'repository:Playbookfile_add' playbookRepository.repository.id %}">
+<form method="post" action="{% url 'repository:playbook_file_add' playbookRepository.repository.id %}">
   {% csrf_token %}
   <div class="modal fade" id="addPlaybookFileModal" tabindex="-1" aria-labelledby="addPlaybookFileModal" aria-hidden="true">
     <div class="modal-dialog">
@@ -764,6 +769,31 @@
 </form>
 
 <script>
+
+  function delTemplate(id){
+    var base_url = window.location.origin;
+
+    $.ajax({
+      url: `${base_url}/doo/template/${id}`,
+      headers: {'X-CSRFToken': '{{ csrf_token }}'},
+      type: 'DELETE',
+      dataType: "json",
+      success: function(data){location.reload();}
+    });
+  }
+
+  function deleteFilePlaybook(id,file){
+
+    var base_url = window.location.origin;
+
+    $.ajax({
+      url: `${base_url}/repository/repo/${id}/playbook/file/del/${file}`,
+      headers: {'X-CSRFToken': '{{ csrf_token }}'},
+      type: 'DELETE',
+      dataType: "json",
+      success: function(data){location.reload();}
+    });
+  }
 
   function refreshTasksTemplate(data){
     id = $('#idTemplateAddTask').val();

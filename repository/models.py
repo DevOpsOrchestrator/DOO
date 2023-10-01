@@ -119,7 +119,7 @@ class Repository(models.Model):
             os.chmod(self.folderRepository()+'/vault.py',0o775)
             
             #criar um projeto em branco 
-            cli = GalaxyCLI(args=["ansible-galaxy", "init", self.nome,"--init-path", self.folderRepository()+'/roles',"--force"])
+            #cli = GalaxyCLI(args=["ansible-galaxy", "init", self.nome,"--init-path", self.folderRepository()+'/roles',"--force"])
             #cli.run()
             
         #bloco de teste

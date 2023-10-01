@@ -127,7 +127,8 @@ class CallbackModule(CallbackBase):
             self._clean_results(result._result, result._task.action)
 
             #if self._run_is_verbose(result):
-            msg += " => %s" % (self._dump_results(result._result),)
+            if self.get_option('display_args'):
+                msg += " => %s" % (self._dump_results(result._result),)
             #self._display.display(msg, color=color)
             self._return.append(f'<div><span style="color: {color}">{msg}</span></div>')
 
@@ -205,7 +206,7 @@ class CallbackModule(CallbackBase):
         # that they can secure this if they feel that their stdout is insecure
         # (shoulder surfing, logging stdout straight to a file, etc).
         args = ''
-        if not task.no_log and C.DISPLAY_ARGS_TO_STDOUT:
+        if not task.no_log and self.get_option('display_args'):
             args = u', '.join(u'%s=%s' % a for a in task.args.items())
             args = u' %s' % args
 

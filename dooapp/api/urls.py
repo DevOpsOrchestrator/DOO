@@ -25,12 +25,9 @@ router.register('template', views.TemplateViewSet)
 # Provision
 router.register('provision', views.ProvisionViewSet)
 
-# FormItens
-router.register('formitens', views.FormItensViewSet)
-
-
 urlpatterns = [
-    path('provision/template/<pk>',views.TemplateProvisionViewSet.as_view(),name='provision_template_add'),  
+    path('provision/template/<pk>',views.TemplateProvisionViewSet.as_view(),name='provision_template_add'),
+    path('provision/template/<pk>/itens',views.TemplateProvisionItensViewSet.as_view(),name='provision_template_itens_detail'),
 ]
 
 urlpatterns += router.urls

@@ -1,3 +1,5 @@
+import re
+
 from rest_framework.routers import APIRootView
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
@@ -18,7 +20,7 @@ from ansible.plugins.loader import init_plugin_loader
 from ansible.utils.vars import load_extra_vars
 
 from dooapp.ansible.callback import CallbackModule
-from ..models import Ticket, Team, Group, Service, Template, FormItens, Provision
+from ..models import Ticket, Team, Group, Service, Template, Provision
 from . import serializers
 
 def get_playbook(template):
@@ -115,6 +117,26 @@ class TemplateViewSet(ModelViewSet):
     queryset = RestrictedQuerySet(model=Template).all()
     serializer_class = serializers.TemplateSerializer
     filterset_fields = ['service']
+    
+class TemplateProvisionItensViewSet(APIView):
+    queryset = RestrictedQuerySet(model=Template).all()
+
+    def get(self, request, *args, **kwargs):
+        pk = self.kwargs.get('pk')
+        template = Template.objects.get(id=pk)
+        
+        with open(template.get_path_playbook(), 'r') as arquivo:
+            playbook = arquivo.read()
+        
+        regex = r'\{\{.*?\}\}'
+    
+        found = re.findall(regex, playbook)
+        items = list(set(found))
+        
+        items = [s.replace('{{', '').replace('}}', '') for s in items]
+
+        return JsonResponse(items, safe=False)
+        
 
 
 class TemplateProvisionViewSet(APIView):
@@ -129,26 +151,27 @@ class TemplateProvisionViewSet(APIView):
 
         playbook_path = template.get_path_playbook()
 
-        extra_vars = []
+        extra_vars = get_params(request.POST.dict())
+        
+        init_plugin_loader([])
 
-        for param, value in get_params(request.POST.dict()).items():
-            extra_vars.append(f'{param}={value}')
+
+        # for param, value in get_params(request.POST.dict()).items():
+        #     extra_vars.append(f"{param.strip()}='{value.strip()}'")
 
         context.CLIARGS = immutabledict(tags={}, listtags=False, listtasks=False, listhosts=False, syntax=False, connection='ssh',
                                         module_path=None, forks=100, remote_user=None, private_key_file=None,
                                         ssh_common_args=None, ssh_extra_args=None, sftp_extra_args=None, scp_extra_args=None, become=True,
-                                        become_method=None, become_user=None, verbosity=True, check=False, start_at_task=None, extra_vars=extra_vars)
+                                        become_method=None, become_user=None, verbosity=True, check=False, start_at_task=None)
 
         # Crie um objeto PlaybookExecutor e execute o playbook
         inventory_repository = InventoryRepository(template.repository)
         inventory_manager = inventory_repository.inventory
         variable_manager = VariableManager(
             loader=inventory_repository.loader, inventory=inventory_manager)
-        variable_manager._extra_vars = load_extra_vars(
-            loader=inventory_repository.loader)
+        variable_manager._extra_vars = extra_vars
 
-        init_plugin_loader([])
-
+        
         playbook = PlaybookExecutor(
             playbooks=[playbook_path],
             inventory=inventory_manager,
@@ -158,12 +181,14 @@ class TemplateProvisionViewSet(APIView):
         )
 
         callback = CallbackModule()
+        callback.set_option('display_failed_stderr', False)
+        callback.set_option('display_args', False)
         callback.set_option('display_skipped_hosts', True)
-        callback.set_option('show_per_host_start', True)
+        callback.set_option('show_per_host_start', False)
         callback.set_option('display_ok_hosts', True)
-        callback.set_option('show_task_path_on_failure', True)
-        # callback.set_option('show_custom_stats', True)
-        callback.set_option('check_mode_markers', True)
+        callback.set_option('show_task_path_on_failure', False)
+        callback.set_option('show_custom_stats', False)
+        callback.set_option('check_mode_markers', False)
 
         playbook._tqm._stdout_callback = callback
 
@@ -175,13 +200,3 @@ class TemplateProvisionViewSet(APIView):
             ticket=ticket, template=template, prompt=' '.join(prompt), user=user)
 
         return JsonResponse({'prompt': prompt, 'ticket': ticket.id}, safe=False)
-
-#
-# FormItens
-#
-
-
-class FormItensViewSet(ModelViewSet):
-    queryset = RestrictedQuerySet(model=FormItens).all()
-    serializer_class = serializers.FormItensSerializer
-    filterset_fields = ['template']

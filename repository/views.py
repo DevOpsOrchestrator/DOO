@@ -1,10 +1,13 @@
 """Class Views Repo"""
+import os
+import shutil
 from typing import Any
 from users.utilities.view import TableView, CreateView, UpdateView, DeleteView, DetailView
 from django.shortcuts import redirect
 from django.http import HttpRequest, HttpResponse
 from django.http import JsonResponse
 from django.urls import reverse
+from django.conf import settings
 from ansible import context
 from ansible.playbook.play_context import PlayContext
 from ansible.parsing.dataloader import DataLoader
@@ -19,7 +22,7 @@ from iac.views import getHtmlInventoryParameter
 from .tables import RepositoryTable
 from .models import (Repository)
 from .helper import handle_uploaded_file
-from dooapp.models import Service,Template, FormItens
+from dooapp.models import Service,Template
 from dooapp.forms import TemplateForm
 
 from ansible.playbook import Playbook
@@ -52,6 +55,14 @@ class RepoCreateView(CreateView):
     fields = ["nome", "url", "token", "token_key"]
     template_name = "repository/repo_form.html"
     success_url = "/repository/repo/"
+    
+    def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
+        path = settings.FOLDER_REPOSITORY+'/'+request.POST['nome']
+        
+        if os.path.exists(path):
+            shutil.rmtree(path)
+        
+        return super().post(request, *args, **kwargs)
 
 class RepoUpdateView(UpdateView):
     """Class Update Repository View"""
@@ -66,6 +77,16 @@ class RepoDeleteView(DeleteView):
     permission_required = 'repository.delete_repo'
     model = Repository
     template_name = "users/confirm_delete.html"
+    
+    def delete(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
+        
+        repository = self.get_object()
+        path = repository.folderRepository()
+        
+        if os.path.exists(path):
+            shutil.rmtree(path)
+            
+        return super().delete(request, *args, **kwargs)
 
 # Classes refering to the Playbook views
 
@@ -83,12 +104,12 @@ def get_params(params_dict):
                 params[params_key] = params_dict[line]
     return params
 
-def get_input_types(params_dict):
+def get_input_prefix(params_dict, prefix):
     """Function Get Parameters"""
     params = {}
     for line in params_dict:
-        if line.startswith('inputType__'):
-            params_key = line.replace('inputType__', '')
+        if line.startswith(prefix):
+            params_key = line.replace(prefix, '')
             if params_dict[line]:
                 params[params_key] = params_dict[line]
     return params
@@ -286,7 +307,6 @@ class TaskTemplateDetailView (DetailView):
 
         return JsonResponse(json_task, safe=False)
 
-
 class TaskTemplateDeleteView(DeleteView):
     """Class Task Delete View"""
     model = Template
@@ -332,21 +352,12 @@ class AddTaskTemplateView(CreateView):
         name = request.POST['name']
         id_module = request.POST['actionSelect']
 
-        ansible_module = AnsibleModule.objects.get(id=id_module)
-        
-        input_types = get_input_types(request.POST.dict())
+        ansible_module = AnsibleModule.objects.get(id=id_module)        
 
         params_data = get_params(request.POST.dict())
-        
-        form_itens = []
-        for param,label in params_data.items():
-            form_itens.append({'input_type':input_types[param],'label':label})
             
         tasks = []
-        
-        for k,v in params_data.items():
-            params_data[k] = "{{"+v+"}}"
-            
+                  
         block = Block()
         task = Task()
         setattr(task, 'name', name)
@@ -361,9 +372,6 @@ class AddTaskTemplateView(CreateView):
         template.salvarPlaybook()
         
         template.save()
-        
-        for form_item in form_itens:
-            FormItens.objects.create(template= template, input_type=form_item['input_type'], label=form_item['label'])
         
         json_tasks = get_tasks_playbook(playbook)
 
@@ -391,7 +399,7 @@ class AddHostTaskTemplateView(CreateView):
         template.playbook = playbook
         template.salvarPlaybook()
         
-        url = reverse('repository:playbook_detail', kwargs={'pk':template.pk})
+        url = reverse('repository:playbook_detail', kwargs={'pk':template.repository.pk})
 
         return JsonResponse({'redirect': url}, safe=False)
 
@@ -509,7 +517,22 @@ class AddFileView(CreateView):
 
         return redirect_main(repository.pk)
 
+class DeleteFileView(DeleteView):
+    """Class Deletar File View"""
+    model = Repository
+    template_name = "repository/playbook_form.html"
 
+    def delete(self, request, *args, **kwargs):
+        repository = self.get_object()
+        file = self.kwargs.get('file')
+        
+        path = f"{repository.folderRepository()}/{file}"
+        
+        if os.path.exists(path):
+            os.remove(path)
+        
+        return JsonResponse({"delete": True}, safe=False)
+    
 class HostDeleteView(DeleteView):
     """Class Deletar Host View"""
     model = Repository

@@ -3,7 +3,7 @@
 {% block content %}
 
 {% if perms.dooapp.add_team %}
-    <a class="btn btn-sm btn-primary" href="{% url 'doo:team_add' %}">+ Equipe</a>
+    <a class="btn btn-sm btn-primary" href="{% url 'doo:team_add' %}">+ Team</a>
 {% endif %}
 
 {% for team in teams %}
@@ -11,13 +11,13 @@
         <div>
             <samp><span>{{team.nome}}</span></samp>
             {% if perms.dooapp.add_group %}
-                <a class="btn btn-sm btn-primary" href="{% url 'doo:group_add' %}">+ Grupo</a>
+                <a class="btn btn-sm btn-primary" href="{% url 'doo:group_add' %}">+ Group</a>
             {% endif %}
             {% if perms.dooapp.change_team %}
-                <a class="btn btn-sm btn-warning" href="{% url 'doo:team_edit' team.id %}">Editar</a>
+                <a class="btn btn-sm btn-warning" href="{% url 'doo:team_edit' team.id %}">Edit</a>
             {% endif %}
             {% if perms.dooapp.delete_team %}
-                <a class="btn btn-sm btn-danger" href="{% url 'doo:team_del' team.id %}">Deletar</a>
+                <a class="btn btn-sm btn-danger" href="{% url 'doo:team_del' team.id %}">Delete</a>
             {% endif %}
         </div>
     </div>
@@ -31,10 +31,10 @@
                             <a class="btn btn-sm btn-primary" href="{% url 'doo:service_add' %}">+ Service</a>
                         {% endif %}
                         {% if perms.dooapp.change_group %}
-                            <a class="btn btn-sm btn-warning" href="{% url 'doo:group_edit' group.id %}">Editar</a>
+                            <a class="btn btn-sm btn-warning" href="{% url 'doo:group_edit' group.id %}">Edit</a>
                         {% endif %}
                         {% if perms.dooapp.delete_group %}
-                            <a class="btn btn-sm btn-danger" href="{% url 'doo:group_del' group.id %}">Deletar</a>
+                            <a class="btn btn-sm btn-danger" href="{% url 'doo:group_del' group.id %}">Delete</a>
                         {% endif %}
                     </div>
                 </div>
@@ -46,20 +46,21 @@
                                     {{service.nome}}
                                 </div>
                                 <div class="col-1" >
-                                    {{service.status}}
+                                    {% if service.status %}
+                                        <span class="badge bg-success">active</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">inative</span>
+                                    {% endif %}
                                 </div>
                                 <div class="col-6" >
-                                    {% if perms.dooapp.add_template %}
-                                        <a class="btn btn-sm btn-primary" href="{% url 'doo:template_add' %}">+ Template</a>
-                                    {% endif %}
                                     {% if perms.dooapp.change_service %}
-                                        <a class="btn btn-sm btn-warning" href="{% url 'doo:service_edit' service.id %}">Editar</a>
+                                        <a class="btn btn-sm btn-warning" href="{% url 'doo:service_edit' service.id %}">Edit</a>
                                     {% endif %}
                                     {% if perms.dooapp.delete_service %}
-                                        <a class="btn btn-sm btn-danger" href="{% url 'doo:service_del' service.id %}">Deletar</a>
+                                        <a class="btn btn-sm btn-danger" href="{% url 'doo:service_del' service.id %}">Delete</a>
                                     {% endif %}
                                     {% if perms.dooapp.view_template %}
-                                        <a class="btn btn-sm btn-success" href="{% url 'doo:service_templates_detail' service.id %}">listar Templates</a>
+                                        <a class="btn btn-sm btn-success" href="{% url 'doo:service_templates_detail' service.id %}">List Templates</a>
                                     {% endif %}
                                 </div>                                
                             </div>

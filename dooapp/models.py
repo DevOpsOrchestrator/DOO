@@ -1,19 +1,19 @@
 import os
 import yaml
-from email.policy import default
-from re import template
+from datetime import datetime
+
 from django.db import models
 
 from django.contrib.auth.models import User
 
-from repository.models import Repository
-
+from ansible.plugins.loader import init_plugin_loader
 from ansible.parsing.dataloader import DataLoader
 from ansible.playbook import Playbook
+from git import Repo
+
+from repository.models import Repository
 from repository.dumper import AnsibleDumperRepository
 from repository.constants import ATTRIBUTES_PLAYBOOK
-from ansible.plugins.loader import init_plugin_loader
-
 
 PRIORIDADE_EMERGENCIAL = 1
 PRIORIDADE_URGENTE = 2
@@ -38,7 +38,8 @@ STATUS_CHOICES = (
 )
 
 TYPE_INPUT = (
-    (1, "Text"),
+    (1, "Text Short"),
+    (2, "Text Long"),
 )
 
 # Class to handle tickets
@@ -169,6 +170,22 @@ class Template(models.Model):
     
     def get_path_playbook(self):
         return f'{self.repository.folderRepository()}/templates/{self.filename}.yml'
+    
+    def commitAndPush(self):
+        dataAtual= datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+
+        #TODO coloca o usuario que fez o commit
+        commit_message = f'commit realizado em {dataAtual}'
+
+        repo = Repo(self.repository.folderRepository())
+
+        #TODO fazer pull
+
+        repo.git.add('--all')
+        repo.index.commit(commit_message)
+
+        origin = repo.remote(name='origin')
+        origin.push()
 
     def get_playbook(self):
         loader = DataLoader()
@@ -194,6 +211,7 @@ class Template(models.Model):
             dataPlaybook.append(data)
 
         self.salvarYaml(dataPlaybook, filename=self.filename+'.yml')
+        self.commitAndPush()
 
     def salvarYaml(self, data, folder=None, filename=None):
         if not filename:
@@ -206,24 +224,7 @@ class Template(models.Model):
                                   sort_keys=False, default_flow_style=False, default_style='', allow_unicode=True)
 
 
-class FormItens(models.Model):
-
-    input_type = models.IntegerField(
-        choices=TYPE_INPUT,
-        default=1,
-    )
-
-    label = models.CharField(
-        max_length=100,
-        verbose_name='label',
-    )
-
-    template = models.ForeignKey(
-        Template, on_delete=models.CASCADE, related_name='formitens')
-
 # Class to handle provision
-
-
 class Provision(models.Model):
 
     ticket = models.ForeignKey(

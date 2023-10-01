@@ -17,6 +17,15 @@ class BaseView(PermissionRequiredMixin):
             return True
 
         return False
+    
+    def get_success_url(self):
+        data = self.request.POST if self.request.method == "POST" else self.request.GET
+        redirect_url = data.get('next', None)
+        
+        if not redirect_url:
+            redirect_url=self.success_url
+
+        return str(redirect_url)
 
 class DetailView(BaseView, DetailView):
 

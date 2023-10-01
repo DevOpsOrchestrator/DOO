@@ -1,10 +1,9 @@
-from typing import Any
-from django.http import HttpRequest, HttpResponse
+"""Views module doapp"""
+import os
+from django.http import JsonResponse, Http404
 from django.views.generic import View
-from django.views.generic.edit import FormView
 from django.shortcuts import  render, redirect
 from django.urls import reverse
-from rest_framework.response import Response
 from rest_framework.views import View as RestView
 
 from users.querysets import RestrictedQuerySet
@@ -30,13 +29,9 @@ from .report import team_report, ReportSerializer
 
 from .forms import TemplateForm
 
-from django.contrib.auth.mixins import PermissionRequiredMixin
-
-from django.http import Http404
-
-
 
 class HomeView(View):
+    """View Home"""
     template_name = 'base/home.html'
 
     def get(self, request):
@@ -109,7 +104,7 @@ class TeamDeleteView(DeleteView):
     permission_required = 'doo.delete_team'
     model = Team
     template_name = "dooapp/confirm_delete.html"
-    success_url = TEAM_URL
+    success_url = '/doo/catalog'
     
 """
     Classes refering to the Group views
@@ -144,7 +139,7 @@ class GroupDeleteView(DeleteView):
     permission_required = 'doo.delete_group'
     model = Group
     template_name = "dooapp/confirm_delete.html"
-    success_url = GROUP_URL
+    success_url = "/doo/catalog"
    
 """
     Classes refering to the Group views
@@ -212,7 +207,7 @@ class ServiceDeleteView(DeleteView):
     permission_required = 'doo.delete_service'
     model = Service
     template_name = "dooapp/confirm_delete.html"
-    success_url = SERVICE_URL
+    success_url = "/doo/catalog"
    
    
 """
@@ -223,7 +218,19 @@ TEMPLATE_URL = '/doo/template/'
 
 class TemplateDetailView (DetailView):
     model = Template
-
+    
+    def delete(self, request, *args, **kwargs):
+        template = self.get_object()
+        
+        path = template.get_path_playbook()
+        
+        if os.path.exists(path):
+            os.remove(path)
+        
+        template.delete()   
+        
+        return JsonResponse({"delete": True}, safe=False)
+    
 class TemplateListView(TableView):
     permission_required = 'doo.view_template'
     model = Template
@@ -235,11 +242,7 @@ class TemplateCreateView(CreateView):
     form_class = TemplateForm
     permission_required = 'dooapp.add_template'
     template_name = "dooapp/template_form.html"
-    success_url = TEMPLATE_URL
-    
-    def get_success_url(self) -> str:
-        return super().get_success_url()
-    
+    success_url = TEMPLATE_URL    
 
 class TemplateUpdateView(UpdateView):
     permission_required = 'doo.change_template'
