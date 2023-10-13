@@ -770,6 +770,12 @@
 
 <script>
 
+  function ajustarAlturaTextarea(textarea) {
+    textarea.style.height = 'auto';
+    textarea.style.height = textarea.scrollHeight + 'px';
+    textarea.value = textarea.value.trim();
+  }
+
   function delTemplate(id){
     var base_url = window.location.origin;
 

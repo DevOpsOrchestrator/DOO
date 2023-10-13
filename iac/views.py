@@ -53,7 +53,7 @@ def getHtmlAnsibleModuleVariable(AnsibleModuleVariables, modal):
           html +=f'<span class="input-group-text {fontRequired}" >{ansibleModuleVariable.name}</span> '
 
           if ansibleModuleVariable.variable_type in ['path','raw','str'] or not ansibleModuleVariable.variable_type:
-               html+=f'<input type="text" class="form-control" name="param__{ansibleModuleVariable.name}" {required}> '
+               html+=f'<textarea rows="1" oninput="ajustarAlturaTextarea(this)" class="form-control" aria-label="{ansibleModuleVariable.name}" name="param__{ansibleModuleVariable.name}" {required} rows=1 style="height:auto;"></textarea>'
           elif ansibleModuleVariable.variable_type == 'bool':
                html+= '<div class="input-group-text"> '
                html+=f'<input class="form-check-input mt-0" type="checkbox" name="param__{ansibleModuleVariable.name}" {required}> </div>'
