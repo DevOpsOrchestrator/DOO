@@ -4,7 +4,7 @@
 
 ## Instalação do ContainerNet
 
-* Siga os passos para instalação no seguinte [link](https://containernet.github.io/).
+* Siga os passos para instalação no seguinte [link]([https://containernet.github.io/](https://github.com/ramonfontes/containernet?tab=readme-ov-file#bare-metal-installation)https://github.com/ramonfontes/containernet?tab=readme-ov-file#bare-metal-installation).
 
 ## Casos de uso
 
