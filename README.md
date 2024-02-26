@@ -11,35 +11,11 @@ Instale o DOO seguindo esse [tutorial](docs/README.md).
 
 ## Docker
 
-Para subir a aplicação e o banco de dados Postgres basta executar o seguinte comando na raiz do projeto:
+Para usar o DOO no Docker, siga o seguinte [tutorial](docs/docker/)
 
-```bash
-docker compose up
-```
-Algumas variaveis podem ser editadas no arquivo .env na raiz do projeto, segue uma explicação sobre as mesmas:
+### Casos de uso
+* Instalação de serviço Web, siga o seguinte [tutorial](docs/docker/webserver)
 
-```bash
-REPOSITORY='/home/app/repository' #Pasta onde o código gerado será salvo localmente
-
-DOO_NAME=doo                      #Nome do container
-DB_WAIT_DEBUG=0                   #Ao ativar essa flag será mostrado mas detalhes de erro de DB
-
-SECRET_KEY='r8OwDznj!!dci#P9ghmR' #SECRET_KEY do Django, sempre altere para produção
-SKIP_SUPERUSER=false              #Ao ativar essa flag não será criado o usuario admim
-SUPERUSER_API_TOKEN=0123456789ab  #Token do usuário admin
-SUPERUSER_EMAIL=admin@example.com #Email do usuário admin
-SUPERUSER_NAME=admin              #Login do usuário admin
-SUPERUSER_PASSWORD=admin          #Senha do usuário admin
-
-POSTGRESQL_VERSION=15             #Versão do Postgres
-POSTGRESQL_NAME=postgres          #Nome do container do Postgres
-POSTGRESQL_HOST=localhost         #Nome do host do Postgres
-POSTGRESQL_PORT_EXTERNAL=5432     #Porta do Postgres
-POSTGRES_DB=doo                   #Nome do banco no Postgres
-POSTGRES_USER=postgres            #Usuário do Postgres
-POSTGRES_PASSWORD=postgres        #Senha do Postgres
-
-```
 ## Containernet 
 
 ### Casos de uso
