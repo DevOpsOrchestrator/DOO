@@ -11,12 +11,14 @@ Instale o DOO seguindo esse [tutorial](docs/README.md).
 
 ## Docker
 
-Para usar o DOO no Docker, siga o seguinte [tutorial](docs/docker/)
+Para usar o DOO no Docker, siga o seguinte [tutorial](docs/docker/).
 
 ### Casos de uso
-* Instalação de serviço Web, siga o seguinte [tutorial](docs/docker/webserver)
+* Instalação de serviço Web, siga o seguinte [tutorial](docs/docker/webserver).
 
 ## Containernet 
 
+Para usar o DOO no Containernet, siga o seguinte [tutorial](docs/containernet).
+
 ### Casos de uso
-* Instalação de serviço Web, siga o seguinte [tutorial](docs/webserver)
+* Instalação de serviço Web, siga o seguinte [tutorial](docs/webserver).
