@@ -40,6 +40,7 @@ POSTGRES_USER=postgres            #Usuário do Postgres
 POSTGRES_PASSWORD=postgres        #Senha do Postgres
 
 ```
+## Containernet 
 
-## Exemplo
-Instalação de serviço Web, siga o seguinte [tutorial](docs/webserver)
+### Casos de uso
+* Instalação de serviço Web, siga o seguinte [tutorial](docs/webserver)
