@@ -2,24 +2,45 @@
 
 ## Requisitos
 *  Ubuntu 22.04.4
+*  Ansible 2.15.9
 *  Python 3.11
+*  Containernet 2.3.1b1
 
 ## Instalação dos requisitos
 
-Instalando Python 3.11
+Instalando o Ansible:
+```shell
+sudo apt-get install ansible
+```
+
+Instalando o Python:
 
 ```shell
 sudo apt install python3.11
 ```
 
+Instalando o containernet
+
+```shell
+git clone https://github.com/containernet/containernet.git
+```
+e depois:
+
+```shell
+sudo ansible-playbook -i "localhost," -c local containernet/ansible/install.yml
+```
+## Iniciando simulação no ContainerNet
+
 Para reproduzir o ambiente basta executar o seguinte comando nessa pasta:
 
 ```shell
-docker compose up
+sudo python3 servico_web_containernet.py
 ```
 Com isso será instanciada a seguinte topologia:
 
 ![alt text](images/webserver_topology.png "Webserver Topology")
+
+
 
 Após a iniciação dos containers vamos acessar o Gitlab no endereço: [http://172.25.0.7](http://172.25.0.7)
 e utilizar as seguintes credenciais:
