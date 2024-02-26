@@ -1,5 +1,8 @@
 # Tutorial de Instalação do DOO
 
+* Para usar o DOO no docker siga esse [tutorial](docker/README.md).
+* Para usar o DOO no Containernet siga esse [tutorial](containernet/README.md).
+
 ## Requisitos
 
 1) Python 3.11 ([Instalação](https://docs.python.org/3/using/index.html));
