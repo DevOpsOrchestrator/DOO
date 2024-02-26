@@ -1,5 +1,17 @@
 # Instalação de um webserver
 
+## Requisitos
+*  Ubuntu 22.04.4
+*  Python 3.11
+
+## Instalação dos requisitos
+
+Instalando Python 3.11
+
+```shell
+sudo apt install python3.11
+```
+
 Para reproduzir o ambiente basta executar o seguinte comando nessa pasta:
 
 ```shell
