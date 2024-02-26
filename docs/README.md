@@ -2,12 +2,20 @@
 
 ## Requisitos
 
-1) Python 3.10 ([Instalação](https://docs.python.org/3/using/index.html));
+1) Python 3.11 ([Instalação](https://docs.python.org/3/using/index.html));
 2) Pip 23 ou maior ([Instalação](https://pip.pypa.io/en/stable/installation/));
 3) Postgresql 15 ou maior ([Download](https://www.postgresql.org/download/));
-4) Gitlab 16 ou maior ([Instalação](https://about.gitlab.com/install/)).
+4) Git 2.34 ou maior ([Download](https://git-scm.com/downloads))
+5) Gitlab 16 ou maior ([Instalação](https://about.gitlab.com/install/)).
 
 ## Instalação
+Faça o clone do DOO, com o seguinte comando:
+
+```shel
+git clone https://github.com/DevOpsOrchestrator/DOO.git
+```
+entre na pasta DOO,
+
 O DOO foi desenvolvido em Python, utilizando o framework Django. Para instalar o Django e as dependências necessárias, basta executar o seguinte comando:
 
 ```bash
