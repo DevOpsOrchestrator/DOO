@@ -41,7 +41,7 @@ com o terminal aberto vamos executar o comando `firefox`,
 ![alt text](images/prompt_containernet.png "Prompt ContainerNet")
 
 
-Após a iniciação dos containers vamos acessar o Gitlab no endereço: [http://10.0.0.251](http://10.0.0.251)
+Após a iniciação dos containers, que pode demorar um pouco, vamos acessar o Gitlab no endereço: [http://10.0.0.251](http://10.0.0.251) (atualize a pagina a cada 10s para ver se iniciou)
 e utilizar as seguintes credenciais:
 *  Usuario: root
 *    Senha: doo$654321
