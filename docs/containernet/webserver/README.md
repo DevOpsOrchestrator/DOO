@@ -32,12 +32,19 @@ Com isso será instanciada a seguinte topologia:
 
 ![alt text](images/webserver_topology.png "Webserver Topology")
 
+Após a execução do código o prompt do ContainerNet será aprensentado,
+
+Vamos abrir um terminal do container do Apache executando o comando `xterm apache1`,
+
+com o terminal aberto vamos executar o comando `firefox`,
+
+![alt text](images/prompt_containernet.png "Prompt ContainerNet")
 
 
-Após a iniciação dos containers vamos acessar o Gitlab no endereço: [http://172.25.0.7](http://172.25.0.7)
+Após a iniciação dos containers vamos acessar o Gitlab no endereço: [http://10.0.0.251](http://10.0.0.251)
 e utilizar as seguintes credenciais:
 *  Usuario: root
-*    Senha: 112233doo
+*    Senha: doo$654321
 
 ![alt text](images/gitlab_login.png "Gitlab Login")
 
@@ -67,28 +74,33 @@ Na próxima tela copiar o Token;
 
 ![alt text](images/gitlab_runner_02.png "Gitlab Runner Token")
 
-Execute o seguinte comando para registrar o Runner no Gitlab, substituir "__TOKEN__" pelo token gerado anteriormente:
+vamos abrir um terminal do container do runner, executando o comando `xterm runner` no prompt do ContainerNet,
+
+com o terminal do runner aberto, execute o seguinte comando para registrar o Runner no Gitlab, substituir "__TOKEN__" pelo token gerado anteriormente:
 
 ```shell
-docker exec -it webserver_gitlab_runner gitlab-runner register --non-interactive --url http://172.25.0.7 --executor shell --token __TOKEN__ 
+gitlab-runner register --non-interactive --url http://10.0.0.251 --executor shell --token __TOKEN__ 
 ```
+
+![alt text](images/runner_prompt.png "Registry Runner")
+
 Verificar se o Runner esta online,
 
 ![alt text](images/gitlab_runner_online.png "Gitlab Runner Online")
 
-O próximo passo é acessar o DevOpsOrchestrator (DOO) no endereço: [http://172.25.0.6:8000](http://172.25.0.6:8000)
+O próximo passo é acessar o DevOpsOrchestrator (DOO) em uma nova aba, no endereço: [http://10.0.0.253:8000](http://10.0.0.253:8000)
 utilizar as seguintes credenciais:
 *  Login: admin
 *  Senha: admin
 
 ![alt text](images/doo_login.png "DOO Login")
 
-Clicar no menu [Repositorio](http://172.25.0.6:8000/repository/repo/)
+Clicar no menu [Repositorio](http://10.0.0.253:8000/repository/repo/)
 clicar no botão **Adicionar**
 utilizar as seguintes informações:
 
 *  Nome: webserver
-*  URL: http://172.25.0.7/root/webserver.git
+*  URL: http://10.0.0.251/root/webserver.git
 *  Token: webserver
 *  Token Key: __Access Token Gerado anteriormente__
 
@@ -98,7 +110,7 @@ Na próxima tela clicar no botão **IaC**,
 
 O próximo passo é adicionar um inventario, clicando no botão **Add Host**,
 vamos preencher com as seguintes informações:
-* Host: 172.25.0.9
+* Host: 10.0.0.254
 * Variables:
   *  ansible_user e clicar em "Adicionar";
   *  ansible_password e clicar em "Adicionar";
@@ -134,6 +146,10 @@ preencher com as seguintes informações:
   *  name e clicar em "+"
   *  state e clicar em "+"
   *  update_cache e clicar em "+"
+preencher:
+* name: apache2
+* state: latest
+* update_cache: checked
 
 O próximo passo é clicar em **New Handler**
 preencher com as seguintes informações:
@@ -161,7 +177,9 @@ Entrar no pipeline e ver o script que foi executado,
 
 ![alt text](images/gitlab_pipeline_02.png "Gitlab Pipeline")
 
-Entrar no caminho [http://172.25.0.9](http://172.25.0.9) e ver o servidor rodando.
+Entrar em uma nova aba no caminho [http://10.0.0.254](http://10.0.0.254) e ver o servidor rodando.
+
+![alt text](images/apache_rodando.png "Apache rodando")
 
 
 
