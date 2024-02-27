@@ -29,7 +29,7 @@ def topology():
     d2 = net.addDocker('gitlab', ip='10.0.0.251', dimage="gitlab/gitlab-ce:latest",
                        port_bindings={80: 80, 443: 443},
                        environment={'GITLAB_OMNIBUS_CONFIG':"external_url 'http://10.0.0.251'",
-                                    'GITLAB_ROOT_PASSWORD':'123456789',
+                                    'GITLAB_ROOT_PASSWORD':'doo$123456',
                                     'GITLAB_SHARED_RUNNERS_REGISTRATION_TOKEN':'j5ZKrgztV5Qm9Cyg5ZFz'},
                        volumes=["config:/etc/gitlab", "logs:/var/log/gitlab", "data:/var/opt/gitlab"])
 
