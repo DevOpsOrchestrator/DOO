@@ -2,16 +2,10 @@
 
 ## Requisitos
 *  Ubuntu 22.04.4
-*  Ansible 2.15.9
 *  Python 3.11
 *  Containernet 2.3.1b1
 
 ## Instalação dos requisitos
-
-Instalando o Ansible:
-```shell
-sudo apt-get install ansible
-```
 
 Instalando o Python:
 
@@ -22,13 +16,11 @@ sudo apt install python3.11
 Instalando o containernet
 
 ```shell
-git clone https://github.com/containernet/containernet.git
+$ git clone https://github.com/ramonfontes/containernet.git
+$ cd containernet
+$ sudo util/install.sh -W
 ```
-e depois:
 
-```shell
-sudo ansible-playbook -i "localhost," -c local containernet/ansible/install.yml
-```
 ## Iniciando simulação no ContainerNet
 
 Para reproduzir o ambiente basta executar o seguinte comando nessa pasta:
