@@ -181,6 +181,9 @@ Entrar em uma nova aba no caminho [http://10.0.0.254](http://10.0.0.254) e ver o
 
 ![alt text](images/apache_rodando.png "Apache rodando")
 
+## Video Explicativo
+
+[![Tutorial](https://img.youtube.com/vi/jP_1qUE6Uco/0.jpg)](https://www.youtube.com/watch?v=jP_1qUE6Uco)
 
 
 
