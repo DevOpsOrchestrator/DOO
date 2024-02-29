@@ -63,7 +63,7 @@ def topology():
                        dimage="thiagoabreulima/validacao:latest",
                        port_bindings={9953: 53, 2222: 22})
     
-    d7 = net.addDocker('client', ip='10.0.0.246', volumes=['/tmp/.X11-unix:/tmp/.X11-unix:rw'],
+    d7 = net.addDocker('cliente', ip='10.0.0.246', volumes=['/tmp/.X11-unix:/tmp/.X11-unix:rw'],
                        privileged=True, environment={'DISPLAY': ":0"},
                        dimage="thiagoabreulima/validacao:latest",
                        port_bindings={4622: 22})
