@@ -1,4 +1,4 @@
-# Instalação de um webserver
+# Instalação de um serviço DNS
 
 ## Requisitos
 *  Ubuntu 22.04.4
@@ -26,22 +26,22 @@ $ sudo util/install.sh -W
 Para reproduzir o ambiente basta executar o seguinte comando nessa pasta:
 
 ```shell
-sudo python3 servico_web_containernet.py
+sudo python3 dns_containernet.py
 ```
 Com isso será instanciada a seguinte topologia:
 
-![alt text](images/webserver_topology.png "Webserver Topology")
+![alt text](images/dns_topology.png "DNS Topology")
 
 Após a execução do código o prompt do ContainerNet será aprensentado,
 
-Vamos abrir um terminal do container do Apache executando o comando `xterm apache1`,
+Vamos abrir um terminal do container do Apache executando o comando `xterm client`,
 
 com o terminal aberto vamos executar o comando `firefox`,
 
 ![alt text](images/prompt_containernet.png "Prompt ContainerNet")
 
 
-Após a iniciação dos containers, que pode demorar um pouco, vamos acessar o Gitlab no endereço: [http://10.0.0.251](http://10.0.0.251) (atualize a pagina a cada 10s para ver se iniciou)
+Após a iniciação dos containers, que pode demorar um pouco, vamos acessar o Gitlab no endereço: [http://10.0.0.241](http://10.0.0.241) (atualize a pagina a cada 10s para ver se iniciou)
 e utilizar as seguintes credenciais:
 *  Usuario: root
 *    Senha: doo$654321
