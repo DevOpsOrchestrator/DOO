@@ -328,6 +328,10 @@ localhost. root.localhost. 123 28800 7200 604800 86400
 ```
 Dessa forma sempre que precisar criar uma zona basta utilizar o template e realizar um provisionamento.
 
+## Video Explicativo
+
+[![Tutorial](https://img.youtube.com/vi/8h7ShyqaLUg/0.jpg)](https://www.youtube.com/watch?v=8h7ShyqaLUg)
+
 
   
 
