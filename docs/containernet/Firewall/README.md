@@ -26,15 +26,15 @@ $ sudo util/install.sh -W
 Para reproduzir o ambiente basta executar o seguinte comando nessa pasta:
 
 ```shell
-sudo python3 servico_web_containernet.py
+sudo python3 firewall_containernet.py
 ```
 Com isso será instanciada a seguinte topologia:
 
-![alt text](images/webserver_topology.png "Webserver Topology")
+![alt text](images/firewall_topology.png "Webserver Topology")
 
 Após a execução do código o prompt do ContainerNet será aprensentado,
 
-Vamos abrir um terminal do container do Apache executando o comando `xterm apache1`,
+Vamos abrir um terminal do container do Apache executando o comando `xterm firewall`,
 
 com o terminal aberto vamos executar o comando `firefox`,
 
