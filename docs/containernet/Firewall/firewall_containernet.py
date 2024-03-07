@@ -52,21 +52,12 @@ def topology():
                                     "SUPERUSER_PASSWORD": "admin"},
                         volumes=["repositorio:/home/app/repository",])
     
-    d5 = net.addDocker('apache1', ip='10.0.0.244', volumes=['/tmp/.X11-unix:/tmp/.X11-unix:rw'],
-                       privileged=True, environment={'DISPLAY': ":0"},
-                       dimage="thiagoabreulima/validacao:latest",
-                       port_bindings={8080: 80, 9922: 22})
-    
-    d6 = net.addDocker('bind9', ip='10.0.0.245', volumes=['/tmp/.X11-unix:/tmp/.X11-unix:rw'],
-                       privileged=True, environment={'DISPLAY': ":0"},
-                       dimage="thiagoabreulima/validacao:latest",
-                       port_bindings={9953: 53, 2222: 22})
     
     firewall = net.addDocker('firewall', ip='10.0.0.1', volumes=['/tmp/.X11-unix:/tmp/.X11-unix:rw'],
                        privileged=True, environment={'DISPLAY': ":0",'LANG': 'en_US.UTF-8','LANGUAGE': 'en_US.UTF-8','LC_ALL': 'en_US.UTF-8'},
                        dimage="thiagoabreulima/validacao:latest")
     
-    d7 = net.addDocker('client', ip='192.168.1.100', volumes=['/tmp/.X11-unix:/tmp/.X11-unix:rw'],
+    d7 = net.addDocker('cliente', ip='192.168.1.100', volumes=['/tmp/.X11-unix:/tmp/.X11-unix:rw'],
                        privileged=True, environment={'DISPLAY': ":0"},
                        dimage="thiagoabreulima/validacao:latest",
                        port_bindings={4622: 22})
@@ -79,8 +70,6 @@ def topology():
     net.addLink(d2, s1)
     net.addLink(d3, s1)
     net.addLink(d4, s1)
-    net.addLink(d5, s1)
-    net.addLink(d6, s1)
     net.addLink(firewall, s1)
     
     s2 = net.addSwitch('s2', failMode='standalone')
@@ -95,8 +84,6 @@ def topology():
     d2.cmd('/assets/wrapper &')
     d3.cmd('gitlab-runner start &')
     d4.cmd('/home/app/doo/docker-entrypoint.sh &')
-    d5.cmd('service ssh start')
-    d6.cmd('service ssh start')
     d7.cmd('service ssh start')
     firewall.cmd('service ssh start')
 

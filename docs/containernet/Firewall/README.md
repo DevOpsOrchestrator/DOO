@@ -41,20 +41,20 @@ com o terminal aberto vamos executar o comando `firefox`,
 ![alt text](images/prompt_containernet.png "Prompt ContainerNet")
 
 
-Após a iniciação dos containers, que pode demorar um pouco, vamos acessar o Gitlab no endereço: [http://10.0.0.251](http://10.0.0.251) (atualize a pagina a cada 10s para ver se iniciou)
+Após a iniciação dos containers, que pode demorar um pouco, vamos acessar o Gitlab no endereço: [http://10.0.0.241](http://10.0.0.241) (atualize a pagina a cada 10s para ver se iniciou)
 e utilizar as seguintes credenciais:
 *  Usuario: root
 *    Senha: doo$654321
 
 ![alt text](images/gitlab_login.png "Gitlab Login")
 
-O próximo passo é criar um projeto no Gitlab, o nome do projeto será **webserver**
+O próximo passo é criar um projeto no Gitlab, o nome do projeto será **firewall**
 
 ![alt text](images/gitlab_project.png "Gitlab Project")
 
-O próximo passo é criar um access token, no caminho [Projeto Webserver > Settings > Access Tokens](http://172.25.0.7/root/webserver/-/settings/access_tokens)
+O próximo passo é criar um access token, no caminho [Projeto Webserver > Settings > Access Tokens](http://10.0.0.241/root/webserver/-/settings/access_tokens)
 será utilizado as seguintes informações:
-*   Token Name: webserver
+*   Token Name: firewall
 *   Expiration date: vazio
 *   Select a role: Maintainer
 *   Select scopes: marcar todos
@@ -63,7 +63,7 @@ Obs: Lembrar de copiar o token e salvar.
 
 ![alt text](images/gitlab_access_token.png "Gitlab Access Token")
 
-O próximo passe é criar um Gitlab Runner no caminho [Admin Area > CI/CD > Runners](http://172.25.0.7/admin/runners)
+O próximo passe é criar um Gitlab Runner no caminho [Admin Area > CI/CD > Runners](http://10.0.0.241/admin/runners)
 
 Clicar no botão **New instance runner**
 marcar a opção **Run untagged jobs**
@@ -88,20 +88,20 @@ Verificar se o Runner esta online,
 
 ![alt text](images/gitlab_runner_online.png "Gitlab Runner Online")
 
-O próximo passo é acessar o DevOpsOrchestrator (DOO) em uma nova aba, no endereço: [http://10.0.0.253:8000](http://10.0.0.253:8000)
+O próximo passo é acessar o DevOpsOrchestrator (DOO) em uma nova aba, no endereço: [http://10.0.0.243:8000](http://10.0.0.243:8000)
 utilizar as seguintes credenciais:
 *  Login: admin
 *  Senha: admin
 
 ![alt text](images/doo_login.png "DOO Login")
 
-Clicar no menu [Repositorio](http://10.0.0.253:8000/repository/repo/)
+Clicar no menu [Repositorio](http://10.0.0.243:8000/repository/repo/)
 clicar no botão **Adicionar**
 utilizar as seguintes informações:
 
-*  Nome: webserver
-*  URL: http://10.0.0.251/root/webserver.git
-*  Token: webserver
+*  Nome: firewall
+*  URL: http://10.0.0.241/root/firewall.git
+*  Token: firewall
 *  Token Key: __Access Token Gerado anteriormente__
 
 Na próxima tela clicar no botão **IaC**,
@@ -110,7 +110,7 @@ Na próxima tela clicar no botão **IaC**,
 
 O próximo passo é adicionar um inventario, clicando no botão **Add Host**,
 vamos preencher com as seguintes informações:
-* Host: 10.0.0.254
+* Host: 10.0.0.1
 * Variables:
   *  ansible_user e clicar em "Adicionar";
   *  ansible_password e clicar em "Adicionar";
@@ -128,58 +128,50 @@ vamos preencher com as seguintes informações:
 O próximo passo é adicionar o arquivo de configuração clicando no botão **Add File**,
 preencher com as seguintes informações:
 * Filename: main
-* Name: Install Webserver e clicar em "Adicionar"
+* Name: Config Firewall e clicar em "Adicionar"
 
 ![alt text](images/doo_file.png "DOO File")
 
 O próximo passo é clicar em **add Hosts** para associar o host a configuração,
-selecione o IP 172.25.0.9,
+selecione o IP 10.0.0.1,
 
 ![alt text](images/doo_file_host.png "DOO Host in File")
 
 O próximo passo é clicar em **add Task**,
 preencher com as seguintes informações:
-*  Playbook: Install Webserver
-*  Name: install apache2
-*  Action: apt
+*  Playbook: Config Firewall
+*  Name: Ativar o encaminhamento de IP
+*  Action: lineinfile
 *  Option:
-  *  name e clicar em "+"
-  *  state e clicar em "+"
-  *  update_cache e clicar em "+"
+  *  line e clicar em "+"
 preencher:
-* name: apache2
-* state: latest
-* update_cache: checked
+* line: net.ipv4.ip_forward=1
+* path: /etc/sysctl.conf
+  
+Clicar me **+ Add Task**
 
-O próximo passo é clicar em **New Handler**
-preencher com as seguintes informações:
-*    Name: start apache
-*  Action: sysvinit
-*  Options:
-  *  state e clicar em "+"
-*  name: apache2
-*  state: started
+O próximo passo é subir a tela e substituir os campos,
+com as seguintes informações:
 
-![alt text](images/doo_handler.png "DOO Handler")
-
-Selecionar **start apache** em Notify e clicar em "+",
-
-![alt text](images/doo_task.png "DOO Task")
-
+*  Playbook: Config Firewall
+*  Name: Configurar NAT
+*  Action: shell
+*  Option:
+  *  cmd e clicar em "+"
+preencher:
+* cmd: iptables -t nat -A POSTROUTING -o firewall-eth0 -j MASQUERADE
+  
 Clicar me **Add Task**
-Clicar em **Create**
 
-Entrar no Gitlab e ver a execução do pipeline no caminho [Projeto webserver > Build > Pipelines ](http://172.25.0.7/root/webserver/-/pipelines)
+Clicar em **Close**
+
+Entrar no Gitlab e ver a execução do pipeline no caminho [Projeto webserver > Build > Pipelines ](http://10.0.0.241/root/webserver/-/pipelines)
 
 ![alt text](images/gitlab_pipeline_01.png "Gitlab Pipelines")
 
 Entrar no pipeline e ver o script que foi executado,
 
 ![alt text](images/gitlab_pipeline_02.png "Gitlab Pipeline")
-
-Entrar em uma nova aba no caminho [http://10.0.0.254](http://10.0.0.254) e ver o servidor rodando.
-
-![alt text](images/apache_rodando.png "Apache rodando")
 
 
 
