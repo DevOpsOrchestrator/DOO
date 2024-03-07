@@ -30,12 +30,12 @@ def topology():
                        environment={'GITLAB_OMNIBUS_CONFIG':"external_url 'http://10.0.0.241'",
                                     'GITLAB_ROOT_PASSWORD':'doo$654321',
                                     'GITLAB_SHARED_RUNNERS_REGISTRATION_TOKEN':'j5ZKrgztV5Qm9Cyg5ZFz'},
-                       volumes=["config:/etc/gitlab", "logs:/var/log/gitlab", "data:/var/opt/gitlab"])
+                       volumes=["/etc/gitlab", "/var/log/gitlab", "/var/opt/gitlab"])
 
     d3 = net.addDocker('runner', ip='10.0.0.242', dimage="thiagoabreulima/gitlab_runner:latest",
                        environment={"CI_SERVER_URL": "10.0.0.241",
                                     "REGISTRATION_TOKEN": "j5ZKrgztV5Qm9Cyg5ZFz"},
-                       volumes=["runner:/etc/gitlab-runner", "sock:/var/run/docker.sock"])
+                       volumes=["/etc/gitlab-runner", "/var/run/docker.sock"])
 
     d4 = net.addDocker('doo', ip='10.0.0.243', dimage="devopsorchestrator/doo:latest",
                        port_bindings={8000: 8000},
