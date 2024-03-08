@@ -173,6 +173,113 @@ Entrar no pipeline e ver o script que foi executado,
 
 ![alt text](images/gitlab_pipeline_02.png "Gitlab Pipeline")
 
+O próximo passo é mudar o gateway do cliente para o firewall, vamos fazer isso de forma manual,
+para isso vamos chamar um terminal do cliente, no console do containernet vamos executar o comando ``xterm cliente``
+
+para vermos a configuração do gateway, iremos executar o seguinte comando:
+
+``shell 
+ip route show
+``
+depois vamos executar o comando ``ip route del default via 172.17.0.1`` para excluir a rota existente,
+
+posteriormente executaremos ``ip route add default via 192.168.1.1`` para adicionar o gateway para o ip do firewall na rede 192.168.1.0
+
+Para testar vamos pingar do cliente para uma maquina na rede 10.0.0.0, 
+executando ``ping 10.0.0.243``.
+
+os comandos executados podem ser visualizados abaixo:
+
+![alt text](images/prompt_cliente.png "Prompt Cliente")
+
+O próximo passo é criar o catalogo para adicionar os templates, voltamos para o DOO e vamos clicar em "Catalogo" no menu superior,
+
+Nessa tela vamos clica em **+ Team** para adicionar uma nova equipe,
+
+* Equipe: Redes e clicar em "Salvar";
+
+Na tela de Catalogo vamos adicionar um grupo na equipe de Redes, clicando em **+ Group**
+
+* Grupo: Segurança
+* Equipe: Redes e clicar em "Salvar";
+
+Na tela de Catalogo vamos adicionar um serviço no grupo de Infraestrutura, clicando em **+ Service**
+
+* Serviço: Firewall
+* Status: Ativo
+* Grupo: Segurança e clicar em "Salvar";
+
+O catalogo ficará com a seguinte estrutura:
+
+![alt text](images/catalogo.png "Catalogo")
+
+O próximo passo é criar o template que irá fazer o bloqueio de porta no firewall, clicando em [Repositorio](http://10.0.0.243:8000/repository/repo/) e clicando em "IaC" no repositório Firewall, na próxima tela clicar em **Add Template**, preenche com os seguintes dados:
+
+* Name: Bloquear Porta
+* Filename: bloquear_porta
+* Service: Firewall
+
+Na tela de IaC vamos clicar em **Add Hosts** no template Bloquear Porta e selecionar o host 10.0.0.1 e clicar em "Add";
+
+Na tela de IaC vamos clicar em **Add Task** no template Add Zona, aqui vamos adicionar a tarefa que irá bloquear a porta,
+A tarefa vai executar um script iptables, para isso vamos selecionar a action "shell" e em options vamos preencher com as seguintes informações:
+
+* Name: Bloquear porta se a porta estiver livre
+* Action: shell
+* Option:
+  * cmd e clicar em "+"
+preencher:
+* cmd:
+`` bash
+iptables -C FORWARD -p tcp --dport {{porta}} -j ACCEPT || iptables -A FORWARD -p tcp --dport {{porta}} -j DROP
+``
+Onde a variavel "{{porta}}" será solicitado no provisionamento.
+
+click em ** + Add Task ** e depois em close.
+
+Para liberar uma porta vamos criar um novo template, 
+na tela de "IaC" clicar em **Add Template**, preenche com os seguintes dados:
+
+* Name: Liberar Porta
+* Filename: liberar_porta
+* Service: Firewall
+
+Na tela de IaC vamos clicar em **Add Hosts** no template Liberar Porta e selecionar o host 10.0.0.1 e clicar em "Add";
+
+Na tela de IaC vamos clicar em **Add Task** no template Liberar Porta, aqui vamos adicionar a tarefa que irá liberar a porta,
+A tarefa vai executar um script iptables, para isso vamos selecionar a action "shell" e em options vamos preencher com as seguintes informações:
+
+* Name: Liberar Porta se a porta estiver bloqueada
+* Action: shell
+* Option:
+  * cmd e clicar em "+"
+preencher:
+* cmd:
+`` bash
+iptables -C FORWARD -p tcp --dport {{porta}} -j DROP && iptables -D FORWARD -p tcp --dport {{porta}} -j DROP
+``
+Onde a variavel "{{porta}}" será solicitado no provisionamento.
+
+click em ** + Add Task ** e depois em close.
+
+Vamos criar uma solicitação de mudança, acessando a opção [solicitações](http://10.0.0.243:8000/doo/ticket/) no menu superior, clicando no botão "adicionar" e preenchendo com as seguintes informações:
+
+*  Numero: 123
+*  Titulo: Bloquear Porta
+*  Descrição: Solicito o bloqueio da porta 80 no Firewall.
+*  Prioridade: media
+
+Clicar em "Salvar"
+
+![alt text](images/solicitacao.png "Solicitação")
+
+Com a solicitação criada podemos clicar no botão **provision**, na tela de provisão vamos preencher com as seguintes informações:
+
+* Services: Firewall
+* Templates: Bloquear Porta
+* porta: 80
+
+
 
 
 
