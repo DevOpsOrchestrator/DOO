@@ -178,9 +178,9 @@ para isso vamos chamar um terminal do cliente, no console do containernet vamos 
 
 para vermos a configuração do gateway, iremos executar o seguinte comando:
 
-``shell 
+```Shell 
 ip route show
-``
+```
 depois vamos executar o comando ``ip route del default via 172.17.0.1`` para excluir a rota existente,
 
 posteriormente executaremos ``ip route add default via 192.168.1.1`` para adicionar o gateway para o ip do firewall na rede 192.168.1.0
@@ -230,9 +230,9 @@ A tarefa vai executar um script iptables, para isso vamos selecionar a action "s
   * cmd e clicar em "+"
 preencher:
 * cmd:
-`` bash
+```bash
 iptables -C FORWARD -p tcp --dport {{porta}} -j ACCEPT || iptables -A FORWARD -p tcp --dport {{porta}} -j DROP
-``
+```
 Onde a variavel "{{porta}}" será solicitado no provisionamento.
 
 click em ** + Add Task ** e depois em close.
@@ -255,9 +255,9 @@ A tarefa vai executar um script iptables, para isso vamos selecionar a action "s
   * cmd e clicar em "+"
 preencher:
 * cmd:
-`` bash
+```bash
 iptables -C FORWARD -p tcp --dport {{porta}} -j DROP && iptables -D FORWARD -p tcp --dport {{porta}} -j DROP
-``
+```
 Onde a variavel "{{porta}}" será solicitado no provisionamento.
 
 click em ** + Add Task ** e depois em close.
@@ -279,7 +279,33 @@ Com a solicitação criada podemos clicar no botão **provision**, na tela de pr
 * Templates: Bloquear Porta
 * porta: 80
 
+Antes de clicar em provision vamos fazer o seguinte teste, vamos no terminal do cliente e executar um comando telnet para o servidor do gitlab para ver o acesso,
 
+execute o comando ``telnet 10.0.0.241 80`` com isso percebemos que o host esta acessivel na porta 80,
+
+agora voltamos no DOO e vamos clicar em **provision**
+
+![alt text](images/provisionamento.png "Provisionamento Bloquear")
+
+depois de executado voltamos para o terminal do cliente e executamos novamente o comando ``telnet 10.0.0.241 80`` e percebemos que o mesmo não tem acesso.
+
+Para liberar o acesso vamos para o DOO e na tela de solicitação vamos escolher as seguinte opções:
+
+* Services: Firewall
+* Templates: Liberar Porta
+* porta: 80
+
+e clicamos em **Provision**
+
+![alt text](images/provisionamento_liberar.png "Provisionamento Liberar")
+
+vamos para o terminal do cliente e executar novamente um ``telnet 10.0.0.241 80`` e percebemos que o acesso foi liberado.
+
+as execuções do terminal do cliente pode ser vista abaixo:
+
+![alt text](images/prompt_cliente_telnet.png "Verificando acesso")
+
+Para Bloquear/Desbloquear uma porta no Firewall basta utilizar os templates.
 
 
 
