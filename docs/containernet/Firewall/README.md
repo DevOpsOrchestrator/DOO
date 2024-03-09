@@ -79,7 +79,7 @@ vamos abrir um terminal do container do runner, executando o comando `xterm runn
 com o terminal do runner aberto, execute o seguinte comando para registrar o Runner no Gitlab, substituir "__TOKEN__" pelo token gerado anteriormente:
 
 ```shell
-gitlab-runner register --non-interactive --url http://10.0.0.251 --executor shell --token __TOKEN__ 
+gitlab-runner register --non-interactive --url http://10.0.0.241 --executor shell --token __TOKEN__ 
 ```
 
 ![alt text](images/runner_prompt.png "Registry Runner")
