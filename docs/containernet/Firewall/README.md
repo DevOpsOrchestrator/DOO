@@ -305,6 +305,10 @@ as execuções do terminal do cliente pode ser vista abaixo:
 
 ![alt text](images/prompt_cliente_telnet.png "Verificando acesso")
 
+## Video Explicativo
+
+[![Tutorial](https://img.youtube.com/vi/hrkJmYyAH30/0.jpg)](https://www.youtube.com/watch?v=hrkJmYyAH30)
+
 Para Bloquear/Desbloquear uma porta no Firewall basta utilizar os templates.
 
 
