@@ -1,4 +1,4 @@
-# Simulação de um Serviço de Firewall utilizando o Containernet
+# Simulação de um Serviço Web utilizando o Containernet
 
 ## Requisitos
 A seguir estão as recomendações de hardware e software para executar a simulação.
@@ -41,7 +41,7 @@ $ sudo util/install.sh -W
 
 ### 1. Iniciando simulação
 
-Depois de fazer checkout do código vamos entrar na pasta ``/DOO/docs/containernet/Firewall``
+Depois de fazer checkout do código vamos entrar na pasta ``/DOO/docs/containernet/Webserver``
 
 ```shell
 sudo python3 servico_web_containernet.py
