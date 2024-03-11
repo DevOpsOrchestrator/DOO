@@ -255,7 +255,7 @@ O catalogo ficará com a seguinte estrutura:
 
 ![alt text](images/catalogo.png "Catalogo")
 
-### 7. Criar Template
+### 7. Criar Templates
 
 O próximo passo é criar o template que irá fazer o bloqueio de porta no firewall, clicando em [Repositorio](http://10.0.0.243:8000/repository/repo/) e clicando em "IaC" no repositório Firewall, na próxima tela clicar em **Add Template**, preenche com os seguintes dados:
 
