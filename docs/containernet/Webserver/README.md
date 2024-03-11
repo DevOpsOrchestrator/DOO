@@ -1,19 +1,31 @@
-# Instalação de um webserver
+# Simulação de um Serviço de Firewall utilizando o Containernet
 
 ## Requisitos
+A seguir estão as recomendações de hardware e software para executar a simulação.
+
+### Hardware
+
+|  **Properties**  	|         **Default Values**        	|
+|:----------------:	|:---------------------------------:	|
+| Operating System 	| Ubuntu Server 22.04.4 LTS 64 bits 	|
+| Memory RAM       	| 5 GB                              	|
+| CPU              	| 3 cores                           	|
+| HD               	| 30 GB                             	|
+
+### Software
 *  Ubuntu 22.04.4
 *  Python 3.11
 *  Containernet 2.3.1b1
 
 ## Instalação dos requisitos
 
-Instalando o Python:
+1. Instalando o Python:
 
 ```shell
 sudo apt install python3.11
 ```
 
-Instalando o containernet
+2. Instalando o containernet
 
 ```shell
 $ git clone https://github.com/ramonfontes/containernet.git
@@ -21,16 +33,19 @@ $ cd containernet
 $ sudo util/install.sh -W
 ```
 
-## Iniciando simulação no ContainerNet
+## Topologia da rede
 
-Para reproduzir o ambiente basta executar o seguinte comando nessa pasta:
+![alt text](images/webserver_topology.png "Webserver Topology")
+
+## Simulação no ContainerNet
+
+### 1. Iniciando simulação
+
+Depois de fazer checkout do código vamos entrar na pasta ``/DOO/docs/containernet/Firewall``
 
 ```shell
 sudo python3 servico_web_containernet.py
 ```
-Com isso será instanciada a seguinte topologia:
-
-![alt text](images/webserver_topology.png "Webserver Topology")
 
 Após a execução do código o prompt do ContainerNet será aprensentado,
 
@@ -40,6 +55,7 @@ com o terminal aberto vamos executar o comando `firefox`,
 
 ![alt text](images/prompt_containernet.png "Prompt ContainerNet")
 
+### 2. Acessando o Gitlab
 
 Após a iniciação dos containers, que pode demorar um pouco, vamos acessar o Gitlab no endereço: [http://10.0.0.251](http://10.0.0.251) (atualize a pagina a cada 10s para ver se iniciou)
 e utilizar as seguintes credenciais:
@@ -48,9 +64,13 @@ e utilizar as seguintes credenciais:
 
 ![alt text](images/gitlab_login.png "Gitlab Login")
 
+#### 2.1 Criando Projeto
+
 O próximo passo é criar um projeto no Gitlab, o nome do projeto será **webserver**
 
 ![alt text](images/gitlab_project.png "Gitlab Project")
+
+#### 2.2 Criando o Token
 
 O próximo passo é criar um access token, no caminho [Projeto Webserver > Settings > Access Tokens](http://172.25.0.7/root/webserver/-/settings/access_tokens)
 será utilizado as seguintes informações:
@@ -62,6 +82,8 @@ será utilizado as seguintes informações:
 Obs: Lembrar de copiar o token e salvar.
 
 ![alt text](images/gitlab_access_token.png "Gitlab Access Token")
+
+#### 2.3 Configurando o Runner
 
 O próximo passe é criar um Gitlab Runner no caminho [Admin Area > CI/CD > Runners](http://172.25.0.7/admin/runners)
 
@@ -88,12 +110,16 @@ Verificar se o Runner esta online,
 
 ![alt text](images/gitlab_runner_online.png "Gitlab Runner Online")
 
+### 3. Acessando o DOO
+
 O próximo passo é acessar o DevOpsOrchestrator (DOO) em uma nova aba, no endereço: [http://10.0.0.253:8000](http://10.0.0.253:8000)
 utilizar as seguintes credenciais:
 *  Login: admin
 *  Senha: admin
 
 ![alt text](images/doo_login.png "DOO Login")
+
+#### 3.1 Criando Repositório no DOO
 
 Clicar no menu [Repositorio](http://10.0.0.253:8000/repository/repo/)
 clicar no botão **Adicionar**
@@ -107,6 +133,8 @@ utilizar as seguintes informações:
 Na próxima tela clicar no botão **IaC**,
 
 ![alt text](images/doo_repository_created.png "DOO Repository")
+
+#### 3.2 Adicionando Inventario
 
 O próximo passo é adicionar um inventario, clicando no botão **Add Host**,
 vamos preencher com as seguintes informações:
@@ -125,6 +153,8 @@ vamos preencher com as seguintes informações:
 * ansible_ssh_common_args: -o StrictHostKeyChecking=no
 * ansible_become_method: su
 
+#### 3.3 Adicionando Playbook
+
 O próximo passo é adicionar o arquivo de configuração clicando no botão **Add File**,
 preencher com as seguintes informações:
 * Filename: main
@@ -132,10 +162,14 @@ preencher com as seguintes informações:
 
 ![alt text](images/doo_file.png "DOO File")
 
+#### 3.4 Adicionando Host no Playbook
+
 O próximo passo é clicar em **add Hosts** para associar o host a configuração,
 selecione o IP 172.25.0.9,
 
 ![alt text](images/doo_file_host.png "DOO Host in File")
+
+#### 3.5 Adicionando Tarefas no Playbook
 
 O próximo passo é clicar em **add Task**,
 preencher com as seguintes informações:
@@ -169,6 +203,8 @@ Selecionar **start apache** em Notify e clicar em "+",
 Clicar me **Add Task**
 Clicar em **Create**
 
+### 4. Conferir Pipeline no Gitlab
+
 Entrar no Gitlab e ver a execução do pipeline no caminho [Projeto webserver > Build > Pipelines ](http://172.25.0.7/root/webserver/-/pipelines)
 
 ![alt text](images/gitlab_pipeline_01.png "Gitlab Pipelines")
@@ -176,6 +212,8 @@ Entrar no Gitlab e ver a execução do pipeline no caminho [Projeto webserver > 
 Entrar no pipeline e ver o script que foi executado,
 
 ![alt text](images/gitlab_pipeline_02.png "Gitlab Pipeline")
+
+### 5. Acessar o servidor Web
 
 Entrar em uma nova aba no caminho [http://10.0.0.254](http://10.0.0.254) e ver o servidor rodando.
 
