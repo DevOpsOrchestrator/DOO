@@ -202,7 +202,8 @@ Selecionar **start bind** em Notify e clicar em "+",
 
 ![alt text](images/doo_task.png "DOO Task")
 
-Clicar me **Add Task**
+Clicar em **Add Task** e depois
+
 Clicar em **Close**
 
 ### 4. Conferir Pipeline no Gitlab
@@ -271,7 +272,7 @@ zone "{{zona}}" IN {
 
 Obs: a variavel {{zona}} permite que seu valor seja definido no formulario de provisionamento, então toda variavel entre chaves duplas terá um campo no formulario de provisionamento.
 
-Clicar em "+ Add Task"
+Clicar em **+ Add Task**
 
 A segunda tarefa tem como objetivo criar um arquivo de zona, iremos utilizar a action "copy", para isso vamos subir no formulario e substituir os valores com as seguintes informações:
 
@@ -305,7 +306,7 @@ www     IN      A       10.0.0.244
 
 Obs: é criado um arquivo de zona default já com um registro do tipo A apontando para o IP 10.0.0.244
 
-Clicar em "+ Add Task"
+Clicar em **+ Add Task**
 
 Por último vamos adicionar a tarefa que irá carregar a zona no servidor, vamos usar a action "shell", para isso vamos subir no formulario e substituir os valores com as seguintes informações:
 
@@ -316,7 +317,7 @@ Por último vamos adicionar a tarefa que irá carregar a zona no servidor, vamos
 preencher:
 * cmd: rndc reconfig {{zona}}
 
-Clicar em "+ Add Task"
+Clicar em **+ Add Task**
 
 Com as três tarefas criados podemos clicar em "close".
 
@@ -331,7 +332,7 @@ Vamos criar uma solicitação de mudança, acessando a opção [solicitações](
 *  Descrição: Solicito que seja adicionado a zona teste.zona.br
 *  Prioridade: media
 
-Clicar em "Salvar"
+Clicar em **Salvar**
 
 ![alt text](images/solicitacao.png "Solicitação")
 
@@ -341,7 +342,7 @@ Com a solicitação criada podemos clicar no botão **provision**, na tela de pr
 * Templates: Add Zona
 * zona: teste.zona.br
 
-antes de clicar em "provisionar" vamos fazer o seguinte teste, no console do containernet vamos digitar o comando ``` xterm cliente ``` para chamar um terminal do cliente,
+Antes de clicar em **provisionar** vamos fazer o seguinte teste, no console do containernet vamos digitar o comando ``` xterm cliente ``` para chamar um terminal do cliente,
 nesse terminal vamos instalar o pacote dnsutils com o seguinte comando:
 ```shell
 apt update && apt install dnsutils
