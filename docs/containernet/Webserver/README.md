@@ -158,7 +158,7 @@ vamos preencher com as seguintes informações:
 O próximo passo é adicionar o arquivo de configuração clicando no botão **Add File**,
 preencher com as seguintes informações:
 * Filename: main
-* Name: Install Webserver e clicar em "Adicionar"
+* Name: Install Webserver e clicar em **Adicionar**
 
 ![alt text](images/doo_file.png "DOO File")
 
@@ -201,7 +201,7 @@ Selecionar **start apache** em Notify e clicar em "+",
 ![alt text](images/doo_task.png "DOO Task")
 
 Clicar me **Add Task**
-Clicar em **Create**
+Clicar em **Close**
 
 ### 4. Conferir Pipeline no Gitlab
 
