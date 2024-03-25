@@ -6,19 +6,12 @@ O DOO é fruto de uma pesquisa de Thiago de Abreu Lima sob orientação do profe
 
 ## Instalação
 
-Instale o DOO seguindo esse [tutorial](docs/README.md).
+Instale o DOO seguindo esse [tutorial](INSTALLATION.md).
 
+## SBRC 2024
 
-## Docker
+Instruções de reprodutibilidade para os 3 casos de uso dos artigos **DOO: Solução Integrada de Gerenciamento de Serviços** e **Automatizando o Gerenciamento de Serviços de Rede com DevOpsOrchestrator**:
 
-Para usar o DOO no Docker, siga o seguinte [tutorial](docs/docker/).
-
-### Casos de uso
-* Instalação de serviço Web, siga o seguinte [tutorial](docs/docker/webserver).
-
-## Containernet 
-
-Para usar o DOO no Containernet, siga o seguinte [tutorial](docs/containernet).
-
-### Casos de uso
-* Instalação de serviço Web, siga o seguinte [tutorial](docs/containernet/webserver).
+* Instalação de serviço Web, siga o seguinte [tutorial](sbrc2024/Webserver);
+* Instalação de serviço DNS, siga o seguinte [tutorial](sbrc2024/DNS);
+* Instalação de serviço Firewall, siga o seguinte [tutorial](sbrc2024/Firewall).
