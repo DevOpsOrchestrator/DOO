@@ -10,7 +10,7 @@ Instale o DOO seguindo esse [tutorial](INSTALLATION.md).
 
 ## SBRC 2024
 
-Instruções de reprodutibilidade para os 3 casos de uso dos artigos **DOO: Solução Integrada de Gerenciamento de Serviços** e **Automatizando o Gerenciamento de Serviços de Rede com DevOpsOrchestrator**:
+Instruções de reprodutibilidade para os 3 casos de uso do artigo submetido ao SBRC 2024:
 
 * Instalação de serviço Web, siga o seguinte [tutorial](sbrc2024/Webserver);
 * Instalação de serviço DNS, siga o seguinte [tutorial](sbrc2024/DNS);
